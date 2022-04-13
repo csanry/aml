@@ -62,7 +62,7 @@ $ git clone https://github.com/csanry/aml.git
 $ cd aml
 ```
 
-Download and install [anaconda](https://www.anaconda.com/products/distribution)
+Download and install [anaconda](https://www.anaconda.com/products/distribution) for your os 
 
 Then run the following to create the ML environment
 
@@ -70,10 +70,15 @@ Then run the following to create the ML environment
 $ make create_environment
 ```
 
+If you are using a Linux distro run 
+
+```
+$ make create_environment_linux
+```
+
+
 Check that the environment is correctly set up
 
 ```
 $ make test_environment
 ```
-
-
