@@ -2,6 +2,7 @@
 # $ conda create --name <env> --file <this file>
 # platform: osx-64
 _ipyw_jlab_nb_ext_conf=0.1.0=py39hecd8cb5_0
+_py-xgboost-mutex=2.0=cpu_0
 alabaster=0.7.12=pyhd3eb1b0_0
 anaconda=2021.11=py39_0
 anaconda-client=1.9.0=py39hecd8cb5_0
@@ -168,6 +169,7 @@ libtiff=4.2.0=h87d7836_0
 libuv=1.40.0=haf1e3a3_0
 libwebp=1.2.0=hacca55c_0
 libwebp-base=1.2.0=h9ed2024_0
+libxgboost=1.5.1=cpu_h598c753_2
 libxml2=2.9.12=hcdb78fc_0
 libxslt=1.1.34=h83b36ba_0
 libzopfli=1.0.3=hb1e8313_0
@@ -182,6 +184,7 @@ matplotlib=3.4.3=py39hecd8cb5_0
 matplotlib-base=3.4.3=py39h0a11d32_0
 matplotlib-inline=0.1.2=pyhd3eb1b0_2
 mccabe=0.6.1=py39hecd8cb5_1
+missingno=0.4.2=py_1
 mistune=0.8.4=py39h9ed2024_1000
 mkl=2021.4.0=hecd8cb5_637
 mkl-service=2.4.0=py39h9ed2024_0
@@ -244,6 +247,7 @@ psutil=5.8.0=py39h9ed2024_1
 ptyprocess=0.7.0=pyhd3eb1b0_2
 py=1.10.0=pyhd3eb1b0_0
 py-lief=0.10.1=py39h23ab428_1
+py-xgboost=1.5.1=cpu_py39hb0a6171_2
 pycodestyle=2.7.0=pyhd3eb1b0_0
 pycosat=0.6.3=py39h9ed2024_0
 pycparser=2.20=py_2
@@ -271,6 +275,7 @@ python-lsp-jsonrpc=1.0.0=pyhd3eb1b0_0
 python-lsp-server=1.2.4=pyhd3eb1b0_0
 python-slugify=5.0.2=pyhd3eb1b0_0
 python.app=3=py39hca72f7f_0
+python_abi=3.9=2_cp39
 pytz=2021.3=pyhd3eb1b0_0
 pywavelets=1.1.1=py39he3068b8_4
 pyyaml=6.0=py39hca72f7f_1
@@ -354,6 +359,7 @@ whichcraft=0.6.1=pyhd3eb1b0_0
 widgetsnbextension=3.5.1=py39hecd8cb5_0
 wrapt=1.12.1=py39h9ed2024_1
 wurlitzer=2.1.1=py39hecd8cb5_0
+xgboost=1.5.1=cpu_py39h037b50c_2
 xlrd=2.0.1=pyhd3eb1b0_0
 xlsxwriter=3.0.1=pyhd3eb1b0_0
 xlwings=0.24.9=py39hecd8cb5_0
