@@ -167,3 +167,6 @@ zeromq=4.3.4=h9c3ff4c_0
 zfp=0.5.5=h295c915_6
 zlib=1.2.11=h7f8727e_4
 zstd=1.4.9=haebb681_0
+jupyter==1.0.0
+jupyter_server==1.4.1
+jupyterlab==3.2.1
