@@ -1,10 +1,19 @@
 README
 ==============================
 
-Project Organization
+1. [Project Organization](#1)
+2. [Downloading and using](#2)
+3. [Using a docker image](#3)
+4. [Development workflow](#4)
+5. [Submitting a pull request](#5)
+
+
+Project Organization <a name="1"></a>
 ------------
 
     ├── LICENSE
+    ├── Dockerfile
+    ├── docker-compose.yml <- Docker files to set up a containerized environment
     ├── Makefile           <- Makefile with commands like `make data` or `make train`
     ├── README.md          <- The top-level README for developers using this project.
     ├── data
@@ -52,7 +61,7 @@ Project Organization
 ---
 
 
-Downloading and using 
+Downloading and using <a name="2"></a>
 ------------
 
 First, run the following terminal commands 
@@ -76,9 +85,63 @@ If you are using a Linux distro run
 $ make create_environment_linux
 ```
 
-
 Check that the environment is correctly set up
 
 ```
 $ make test_environment
 ```
+
+---
+
+
+Using a docker image <a name="3"></a>
+------------
+
+Download [docker](https://www.docker.com/products/docker-desktop/) and run the command 
+
+```
+$ docker-compose up
+```
+
+A docker container is created which the ubuntu linux distro and launchesj a jupyter lab environment for data science workflows
+
+Run `docker-compose down` after you are done with your work
+
+---
+
+
+Development workflow <a name="4"></a>
+------------
+
+We will utilise the [github flow](https://githubflow.github.io/) philosophy where:
+
+* Features should be developed on branches
+
+* Whenever you think that the branch is ready for merging, open a [pull request](https://www.freecodecamp.org/news/how-to-make-your-first-pull-request-on-github-3/) 
+
+* Why? Ensures that main branch is as clean and deployable as possible, no conflicts due to competing branches
+
+* For more information, refer to this [article](https://githubflow.github.io/)
+
+Submitting a pull request example <a name="5"></a>
+------------
+
+```bash
+# checkout a branch
+$ git checkout -b cs --track origin/main
+
+# add and commit changes to the branch
+$ git add .
+$ git commit -m "message" -m "more detail on changes made" 
+
+# push changes
+$ git push origin cs
+```
+
+* Head to the main [repo](https://github.com/csanry/aml), find your branch, and click on "new pull request" 
+
+* Enter a __descriptive__ title and description for your pull request
+
+* Click on reviewers on the right side and request a review from `csanry`
+
+* Select `create pull request` 

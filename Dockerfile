@@ -14,6 +14,6 @@ RUN wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh \
 
 COPY . src/
 RUN /bin/bash -c "cd src \
-    && conda create -y -n aml --file requirements_linux.txt -c conda-forge"
+    && conda create -y -n aml --file requirements.txt -c conda-forge"
 
 RUN /bin/bash -c "source activate aml" 

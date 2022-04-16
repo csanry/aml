@@ -1,10 +1,10 @@
 version: "3"
 services:
   jupyterlab:
+    platform: "linux/amd64"
     build: .
     command: "bash -c 'source activate aml && jupyter lab --no-browser --ip=* --port=9000 --allow-root --notebook-dir=/src/ --NotebookApp.token=\"\"'"
     volumes:
       - ./:/src/
     ports:
       - "9000:9000"
-    platform: "linux/amd64"
