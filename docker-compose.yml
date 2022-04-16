@@ -7,3 +7,4 @@ services:
       - ./:/src/
     ports:
       - "9000:9000"
+    platform: "linux/amd64"
