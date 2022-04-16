@@ -145,3 +145,6 @@ $ git push origin cs
 * Click on reviewers on the right side and request a review from `csanry`
 
 * Select `create pull request` 
+
+* For a visual explanation refer to [this document](/pr.pdf)
+
