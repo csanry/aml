@@ -7,6 +7,6 @@ HOME_DIR = os.path.expanduser("~")
 EPOCHS = 10
 
 # path to model files
-TRAIN_FILE_PATH  = os.path.join(HOME_DIR, "data", "final")
+TRAIN_FILE_PATH = os.path.join(HOME_DIR, "data", "final")
 MODEL_OUTPUT = os.path.join(HOME_DIR, "models")
 
