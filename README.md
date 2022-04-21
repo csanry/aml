@@ -17,9 +17,8 @@ Project Organization <a name="1"></a>
     ├── Makefile           <- Makefile with commands like `make data` or `make train`
     ├── README.md          <- The top-level README for developers using this project.
     ├── data
-    │   ├── external       <- Data from third party sources.
     │   ├── interim        <- Intermediate data that has been transformed.
-    │   ├── processed      <- The final, canonical data sets for modeling.
+    │   ├── final          <- The final, canonical data sets for modeling.
     │   └── raw            <- The original, immutable data dump.
     │
     ├── docs               <- A default Sphinx project; see sphinx-doc.org for details
@@ -71,24 +70,24 @@ $ git clone https://github.com/csanry/aml.git
 $ cd aml
 ```
 
-Download and install [anaconda](https://www.anaconda.com/products/distribution) for your os 
+Download and install [anaconda](https://www.anaconda.com/products/distribution)  
 
-Then run the following to create the ML environment
+Then run the following to create the ML environment (requires linux distro)
 
 ```
 $ make create_environment
-```
-
-If you are using a Linux distro run 
-
-```
-$ make create_environment_linux
 ```
 
 Check that the environment is correctly set up
 
 ```
 $ make test_environment
+```
+
+Setup can also be done from the `environment.yml` file 
+
+```
+$ conda env create -f environment.yml
 ```
 
 ---
