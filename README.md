@@ -102,7 +102,7 @@ Download [docker](https://www.docker.com/products/docker-desktop/) and run the c
 $ docker-compose up
 ```
 
-A docker container is created which the ubuntu linux distro and launchesj a jupyter lab environment for data science workflows
+A docker container is created which the ubuntu linux distro and launches a Jupyter Lab environment for data science workflows
 
 Run `docker-compose down` after you are done with your work
 
