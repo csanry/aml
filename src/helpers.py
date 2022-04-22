@@ -20,6 +20,8 @@ def get_numeric_columns(df: pd.DataFrame) -> List:
         
     df : pd.DataFrame :
         
+    df : pd.DataFrame :
+        
     df: pd.DataFrame :
         
 
@@ -40,6 +42,8 @@ def get_categorical_columns(df: pd.DataFrame) -> List:
         
     df : pd.DataFrame :
         
+    df : pd.DataFrame :
+        
     df: pd.DataFrame :
         
 
@@ -56,6 +60,10 @@ def convert_to_dtype(col: pd.Series, type: str = 'categorical') -> pd.Series:
 
     Parameters
     ----------
+    col : pd.Series :
+        
+    type : str :
+        (Default value = 'categorical')
     col : pd.Series :
         
     type : str :
@@ -100,6 +108,10 @@ def replace_missing_values(df: pd.DataFrame, cols: Union[str, Iterable[str], Has
         
     cols : Union[str :
         
+    df : pd.DataFrame :
+        
+    cols : Union[str :
+        
     df: pd.DataFrame :
         
     cols: Union[str :
@@ -117,6 +129,8 @@ def return_value_counts(df: pd.DataFrame) -> None:
 
     Parameters
     ----------
+    df : pd.DataFrame :
+        
     df : pd.DataFrame :
         
     df : pd.DataFrame :
@@ -145,6 +159,8 @@ def set_up_fig(rows: int=1) -> None:
         (Default value = 1)
     rows : int :
         (Default value = 1)
+    rows : int :
+        (Default value = 1)
     rows: int :
          (Default value = 1)
 
@@ -166,6 +182,8 @@ def quick_eda(df: pd.DataFrame) -> None:
         
     df : pd.DataFrame :
         
+    df : pd.DataFrame :
+        
     df: pd.DataFrame :
         
 
@@ -178,45 +196,35 @@ def quick_eda(df: pd.DataFrame) -> None:
     print(df.info())
     display(df.describe().T)
     display(df.head(5))
-## standardize columns 
 
-def standardize_cols(col: str) -> str: 
+
+def standardize_cols(column_list: List[str]) -> List[str]: 
     """
 
     Parameters
     ----------
-    col : str :
+    column_list: List[str] :
         
-    col : str :
-        
-    col: str :
+
+    Returns
+    -------
+    """
+    return [col.lower().strip().replace(' ', '-') for col in column_list]
+
+def visualize_cols(column_list: List[str]) -> List[str]: 
+    """
+
+    Parameters
+    ----------
+    column_list: List[str] :
         
 
     Returns
     -------
 
-    
-    """
-    return col.lower().strip().replace(' ', '-') 
-
-def visualize_cols(col: str) -> str: 
     """
 
-    Parameters
-    ----------
-    col : str :
-        
-    col : str :
-        
-    col: str :
-        
-
-    Returns
-    -------
-
-    
-    """
-    return col.capitalize().replace('-', ' ')
+    return [col.capitalize().replace('-', ' ') for col in column_list]
 
 
 def missingness_checks(df: pd.DataFrame) -> None:
@@ -224,6 +232,8 @@ def missingness_checks(df: pd.DataFrame) -> None:
 
     Parameters
     ----------
+    df : pd.DataFrame :
+        
     df : pd.DataFrame :
         
     df: pd.DataFrame :
@@ -253,6 +263,8 @@ def get_dtypes(df: pd.DataFrame) -> Dict:
     ----------
     df : pd.DataFrame :
         
+    df : pd.DataFrame :
+        
     df: pd.DataFrame :
         
 
@@ -268,6 +280,12 @@ def quick_plot(df: pd.DataFrame, hue_var: str = None, diag_kind: str = 'kde') ->
 
     Parameters
     ----------
+    df : pd.DataFrame :
+        
+    hue_var : str :
+        (Default value = None)
+    diag_kind : str :
+        (Default value = 'kde')
     df : pd.DataFrame :
         
     hue_var : str :
@@ -290,6 +308,7 @@ def quick_plot(df: pd.DataFrame, hue_var: str = None, diag_kind: str = 'kde') ->
     plt.show() 
 
 def main() -> None: 
+    """ """
     pass 
 
 if __name__ == "__main__": 
