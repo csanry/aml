@@ -1,6 +1,3 @@
-# base 
-import os 
-import sys
 from src import config
 import pandas as pd 
 import matplotlib.pyplot as plt
@@ -101,7 +98,7 @@ class plotviz:
                                       linestyle=config.DEFAULT_PLOT_LINESTYLE, dashes=config.DEFAULT_DASHES)
             globals()[f'ax{run}'].set_title(col.replace('_', ' ').capitalize(), fontsize=config.DEFAULT_AXIS_FONT_SIZE, 
                                            fontweight='bold')
-            globals()[f'ax{run}'].set_xlim(df[col].min() - 2, df[col].max() + 2)
+            globals()[f'ax{run}'].set_xlim(self.df[col].min() - 2, self.df[col].max() + 2)
             globals()[f'ax{run}'].set_xlabel('')
             globals()[f'ax{run}'].set_ylabel('')
             globals()[f'ax{run}'].set_xticklabels('')
@@ -120,7 +117,7 @@ class plotviz:
                                       linestyle=config.DEFAULT_PLOT_LINESTYLE, dashes=config.DEFAULT_DASHES)
             globals()[f'ax{run}'].set_title(col.replace('_', ' ').capitalize(), fontsize=config.DEFAULT_AXIS_FONT_SIZE, 
                                            fontweight='bold')
-            globals()[f'ax{run}'].set_xlim(df[col].min() - 2, df[col].max() + 2)
+            globals()[f'ax{run}'].set_xlim(self.df[col].min() - 2, self.df[col].max() + 2)
             globals()[f'ax{run}'].set_xlabel('')
             globals()[f'ax{run}'].set_ylabel('')
             run += 1
@@ -161,6 +158,28 @@ class plotviz:
             run += 1
         plt.show()
 
+
+def quick_plot(df: pd.DataFrame, hue_var: str = None, diag_kind: str = 'kde') -> None: 
+    """Computes a quick summary plot of numeric values 
+
+    Parameters
+    ----------
+    df : pd.DataFrame :
+        pandas DataFrame object
+
+    hue_var : str :
+        (Default value = None)
+
+    diag_kind : str :
+        (Default value = 'kde')
+    
+    Returns
+    -------
+    A pairplot of numeric values 
+    """
+    sns.pairplot(df, hue=hue_var, diag_kind=diag_kind)
+    plt.show() 
+    
 def main() -> None: 
     pass 
 

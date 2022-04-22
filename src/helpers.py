@@ -215,26 +215,6 @@ def get_dtypes(df: pd.DataFrame) -> Dict:
     """
     return df.dtypes.to_dict()
 
-def quick_plot(df: pd.DataFrame, hue_var: str = None, diag_kind: str = 'kde') -> None: 
-    """Computes a quick summary plot of numeric values 
-
-    Parameters
-    ----------
-    df : pd.DataFrame :
-        pandas DataFrame object
-
-    hue_var : str :
-        (Default value = None)
-
-    diag_kind : str :
-        (Default value = 'kde')
-    
-    Returns
-    -------
-    A pairplot of numeric values 
-    """
-    sns.pairplot(df, hue=hue_var, diag_kind=diag_kind)
-    plt.show() 
 
 def main() -> None: 
     """ """
