@@ -180,6 +180,62 @@ def quick_plot(df: pd.DataFrame, hue_var: str = None, diag_kind: str = 'kde') ->
     sns.pairplot(df, hue=hue_var, diag_kind=diag_kind)
     plt.show() 
     
+
+def set_up_fig(nrows: int = 1, ncols: int = 1, figsize: Tuple = (16, 9)) -> None: 
+    """Sets up a fig and axes to plot 
+
+    Parameters
+    ----------
+    nrows : int :
+        (Default value = 1)
+
+    ncols : int :
+        (Default value = 1)
+    
+    figsize : Tuple :
+        (Default value = (16, 9))
+    
+    Returns
+    -------
+    A figure and array of axes 
+    
+    """
+    fig, ax = plt.subplots(figsize=figsize, nrows=nrows, ncols=nrows)
+    for s in ['top', 'right']: 
+        ax.spines[s].set_visible(False)
+    return fig, ax
+
+def plot_corr(df: pd.DataFrame, rotate_ylabels: bool = False, rotate_xlabels: bool = True) -> None: 
+    """Plots the correlations of an input DataFrame 
+
+    Parameters
+    ----------
+    df : pd.DataFrame :
+        pandas DataFrame object
+
+    rotate_ylabels : bool :
+        (Default value = False)
+    
+    rotate_xlabels : bool :
+        (Default value = False)
+    
+    Returns
+    -------
+    A correlation matrix heatmap 
+    
+    """
+    fig, ax = set_up_fig(nrows=1, ncols=1) 
+    cmap = sns.diverging_palette(h_neg=22, h_pos=219, s=80, l=55, as_cmap=True)
+    sns.heatmap(df.corr(), ax=ax, vmin=-1, 
+                vmax=1, annot=True, square=True, 
+                cbar=True, cmap=cmap, fmt='.1g')
+    ax.set_title('Correlation plot', fontweight='bold')
+    ax.set_yticklabels(ax.get_yticklabels(), rotation=(90 if rotate_ylabels else 0))
+    ax.set_xticklabels(ax.get_xticklabels(), rotation=(90 if rotate_xlabels else 0))
+    plt.show()
+
+
+
 def main() -> None: 
     pass 
 
