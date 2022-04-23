@@ -24,8 +24,11 @@ def quick_eda(df: pd.DataFrame) -> None:
     -------
     None; prints information
     """
-    print(f'DATAFRAME HAS {df.shape[0]} ROWS AND {df.shape[1]} COLS')
-    print(df.info())
+    print(
+    f'''
+    DATAFRAME HAS {df.shape[0]} ROWS AND {df.shape[1]} COLS
+    {df.info()}
+    ''')
     display(df.describe().T)
     display(df.head(5))
 
@@ -118,33 +121,13 @@ def return_value_counts(df: pd.DataFrame) -> None:
     
     """
     for col in df.columns: 
-        print(col.upper())
-        print('####################################')
-        print(df[col].value_counts())
-        print('\n')
+        print(
+        f'''
+        {col.upper()}
+        ####################################
+        {df[col].value_counts()}
 
-
-def set_up_fig(nrows: int = 1, ncols: int = 1, figsize: Tuple = (16, 9)) -> None: 
-    """Sets up a fig and axes to plot 
-
-    Parameters
-    ----------
-    nrows : int :
-        (Default value = 1)
-    ncols : int :
-        (Default value = 1)
-    figsize : Tuple :
-        (Default value = (16, 9))
-    Returns
-    -------
-    A figure and array of axes 
-    
-    """
-    fig, ax = plt.subplots(nrows=nrows, ncols=nrows, figsize=figsize)
-    for s in ['top', 'right']: 
-        ax.spines[s].set_visible(False)
-
-
+        ''')
 
 
 def standardize_cols(column_list: List[str]) -> List[str]: 
@@ -173,7 +156,6 @@ def visualize_cols(column_list: List[str]) -> List[str]:
     -------
     List of transformed column names
     """
-
     return [col.capitalize().replace('-', ' ') for col in column_list]
 
 
@@ -190,11 +172,15 @@ def missingness_checks(df: pd.DataFrame) -> None:
     Two plot outputs and missingness information
     """
 
-    print(f'NUMBER OF MISSING COLUMNS: {df.isna().sum().sum()}')
-    print(f'MISSING COLUMNS (0: NO MISSING VALUES, 1: MISSING VALUES')
-    print(df.isna().sum())
-    print('\n')
-    print('MISSINGNESS THROUGHOUT THE DATA')
+    print(
+    f'''
+    NUMBER OF MISSING COLUMNS: {df.isna().sum().sum()}
+    MISSING COLUMNS (0: NO MISSING VALUES, 1: MISSING VALUES) 
+    {df.isna().sum()}
+
+    MISSINGNESS THROUGHOUT THE DATA
+    ####################################
+    ''')
     msno.matrix(df) 
     plt.show()
     print('MISSINGNESS CORRELATIONS')
