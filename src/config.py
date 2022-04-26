@@ -8,6 +8,7 @@ EPOCHS = 10
 # paths 
 HOME_DIR = Path.home()
 MAIN_DIR = Path.cwd().parent
+RAW_FILE_PATH = MAIN_DIR / "data" / "raw"
 TRAIN_FILE_PATH = MAIN_DIR / "data" / "final"
 MODEL_OUTPUT_PATH = MAIN_DIR / "models"
 NOTEBOOKS_PATH = MAIN_DIR / "notebooks"
