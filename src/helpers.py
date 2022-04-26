@@ -142,7 +142,7 @@ def standardize_cols(column_list: List[str]) -> List[str]:
     -------
     List of transformed column names
     """
-    return [col.lower().strip().replace(' ', '-') for col in column_list]
+    return [col.lower().strip().replace(' ', '_').replace('-', '_') for col in column_list]
 
 def visualize_cols(column_list: List[str]) -> List[str]: 
     """Transforms column names into a standardized format for data visualization
@@ -156,7 +156,7 @@ def visualize_cols(column_list: List[str]) -> List[str]:
     -------
     List of transformed column names
     """
-    return [col.capitalize().replace('-', ' ') for col in column_list]
+    return [col.capitalize().replace('_', ' ') for col in column_list]
 
 
 def missingness_checks(df: pd.DataFrame) -> None:
