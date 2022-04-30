@@ -159,7 +159,7 @@ class plotviz:
         plt.show()
 
 
-def quick_plot(df: pd.DataFrame, hue_var: str = None, diag_kind: str = 'kde') -> None: 
+def quick_plot(df: pd.DataFrame, hue_var: str = None, diag_kind: str = 'kde', *args, **kwargs) -> None: 
     """Computes a quick summary plot of numeric values 
 
     Parameters
@@ -177,7 +177,7 @@ def quick_plot(df: pd.DataFrame, hue_var: str = None, diag_kind: str = 'kde') ->
     -------
     A pairplot of numeric values 
     """
-    sns.pairplot(df, hue=hue_var, diag_kind=diag_kind)
+    sns.pairplot(df, hue=hue_var, diag_kind=diag_kind, *args, **kwargs)
     plt.show() 
     
 
