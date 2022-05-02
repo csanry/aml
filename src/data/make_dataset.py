@@ -26,7 +26,7 @@ def main():
         df.to_csv(config.RAW_FILE_PATH / raw_filename)
    
 
-    df.to_parquet(config.ROOT_DIR / "data" / "interim" / "df.parquet.zip", compression='gzip')  
+    df.to_parquet(config.ROOT_DIR / "data" / "interim" / "df.parquet")  
 
 
 if __name__ == '__main__':
