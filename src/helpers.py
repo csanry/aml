@@ -1,18 +1,17 @@
-# helpers.py 
-import os 
+# helpers.py
+import os
 import sys
-import pandas as pd 
-import pandas.api.types as types
-from typing import List, Set, Dict, Tuple
-from typing import Union, Any, Optional, Iterable, Hashable
-import matplotlib.pyplot as plt
+from typing import Any, Dict, Hashable, Iterable, List, Optional, Set, Tuple, Union
+
 import matplotlib as mpl
-import seaborn as sns
+import matplotlib.pyplot as plt
 import missingno as msno
+import pandas as pd
+import pandas.api.types as types
+import seaborn as sns
 
 
-
-def quick_eda(df: pd.DataFrame) -> None: 
+def quick_eda(df: pd.DataFrame) -> None:
     """Prints out quick summary statistics and information about the data
 
     Parameters
@@ -25,15 +24,16 @@ def quick_eda(df: pd.DataFrame) -> None:
     None; prints information
     """
     print(
-    f'''
+        f"""
     DATAFRAME HAS {df.shape[0]} ROWS AND {df.shape[1]} COLS
     {df.info()}
-    ''')
+    """
+    )
     display(df.describe().T)
     display(df.head(5))
 
 
-def get_categorical_columns(df: pd.DataFrame) -> List: 
+def get_categorical_columns(df: pd.DataFrame) -> List:
     """Gets a list of columns in the DataFrame which are categorical
     
     Parameters
@@ -49,7 +49,7 @@ def get_categorical_columns(df: pd.DataFrame) -> List:
     return [col for col in df.columns if types.is_categorical_dtype(df[col])]
 
 
-def get_numeric_columns(df: pd.DataFrame) -> List: 
+def get_numeric_columns(df: pd.DataFrame) -> List:
     """Gets a list of columns in the DataFrame which are numeric 
 
     Parameters
@@ -64,7 +64,27 @@ def get_numeric_columns(df: pd.DataFrame) -> List:
     return [col for col in df.columns if types.is_numeric_dtype(df[col])]
 
 
-def convert_to_dtype(col: pd.Series, type: str = 'categorical') -> pd.Series:
+def bin_values(df: pd.DataFrame, col: str) -> None:
+    """Bins values of a numeric column into 5 quantiles, then fills in missing 
+
+    Parameters
+    ----------
+    df : pd.DataFrame :
+        pandas DataFrame object
+
+    col : str : 
+        column to bin values on 
+
+    Returns
+    -------
+    None
+    """
+    df[f"{col}_binned"] = pd.qcut(df[col], q=5, labels=["1", "2", "3", "4", "5"])
+    df[f"{col}_binned"] = df[f"{col}_binned"].astype("object")
+    df[f"{col}_binned"].fillna("missing", inplace=True)
+
+
+def convert_to_dtype(col: pd.Series, type: str = "categorical") -> pd.Series:
     """Convert a column to a dtype 
 
     Parameters
@@ -79,14 +99,18 @@ def convert_to_dtype(col: pd.Series, type: str = 'categorical') -> pd.Series:
     A list of column of type that is converted to 
     
     """
-    if type not in ['numeric', 'categorical']: 
-        raise ValueError('Please enter a valid dtype of either: "numeric" or "categorical"') 
-    elif type == 'numeric': 
-        return pd.to_numeric(col, errors='raise')
-    return col.astype('category')
+    if type not in ["numeric", "categorical"]:
+        raise ValueError(
+            'Please enter a valid dtype of either: "numeric" or "categorical"'
+        )
+    elif type == "numeric":
+        return pd.to_numeric(col, errors="raise")
+    return col.astype("category")
 
 
-def replace_missing_values(df: pd.DataFrame, cols: Union[str, Iterable[str], Hashable], value) -> pd.DataFrame:
+def replace_missing_values(
+    df: pd.DataFrame, cols: Union[str, Iterable[str], Hashable], value
+) -> pd.DataFrame:
     """Replaces missing values 
 
     Parameters
@@ -107,7 +131,8 @@ def replace_missing_values(df: pd.DataFrame, cols: Union[str, Iterable[str], Has
     """
     return df.fillna(value={cols: value})
 
-def return_value_counts(df: pd.DataFrame) -> None: 
+
+def return_value_counts(df: pd.DataFrame) -> None:
     """Compute value counts for each column and prints it out
 
     Parameters
@@ -120,17 +145,18 @@ def return_value_counts(df: pd.DataFrame) -> None:
     None; prints value counts for each column
     
     """
-    for col in df.columns: 
+    for col in df.columns:
         print(
-        f'''
+            f"""
         {col.upper()}
         ####################################
         {df[col].value_counts()}
 
-        ''')
+        """
+        )
 
 
-def standardize_cols(column_list: List[str]) -> List[str]: 
+def standardize_cols(column_list: List[str]) -> List[str]:
     """Transforms column names into a standardized format for data analysis
 
     Parameters
@@ -142,9 +168,12 @@ def standardize_cols(column_list: List[str]) -> List[str]:
     -------
     List of transformed column names
     """
-    return [col.lower().strip().replace(' ', '_').replace('-', '_') for col in column_list]
+    return [
+        col.lower().strip().replace(" ", "_").replace("-", "_") for col in column_list
+    ]
 
-def visualize_cols(column_list: List[str]) -> List[str]: 
+
+def visualize_cols(column_list: List[str]) -> List[str]:
     """Transforms column names into a standardized format for data visualization
 
     Parameters
@@ -156,7 +185,7 @@ def visualize_cols(column_list: List[str]) -> List[str]:
     -------
     List of transformed column names
     """
-    return [col.capitalize().replace('_', ' ') for col in column_list]
+    return [col.capitalize().replace("_", " ") for col in column_list]
 
 
 def missingness_checks(df: pd.DataFrame) -> None:
@@ -173,19 +202,21 @@ def missingness_checks(df: pd.DataFrame) -> None:
     """
 
     print(
-    f'''
+        f"""
     NUMBER OF MISSING COLUMNS: {df.isna().sum().sum()}
     MISSING COLUMNS (0: NO MISSING VALUES, 1: MISSING VALUES) 
     {df.isna().sum()}
 
     MISSINGNESS THROUGHOUT THE DATA
     ####################################
-    ''')
-    msno.matrix(df) 
+    """
+    )
+    msno.matrix(df)
     plt.show()
-    print('MISSINGNESS CORRELATIONS')
+    print("MISSINGNESS CORRELATIONS")
     msno.heatmap(df)
-    plt.show() 
+    plt.show()
+
 
 def get_dtypes(df: pd.DataFrame) -> Dict:
     """Get the dtypes of each column in a dictionary format
@@ -202,9 +233,11 @@ def get_dtypes(df: pd.DataFrame) -> Dict:
     return df.dtypes.to_dict()
 
 
-def main() -> None: 
+def main() -> None:
     """ """
-    pass 
+    pass
 
-if __name__ == "__main__": 
-    main() 
+
+if __name__ == "__main__":
+    main()
+

@@ -1,14 +1,24 @@
 # evaluation.py
 import os
+from typing import Type, Union
+
 import numpy as np
-import pandas as pd 
+import pandas as pd
+from sklearn.metrics import (
+    accuracy_score,
+    f1_score,
+    precision_score,
+    recall_score,
+    roc_auc_score,
+)
 from sklearn.model_selection import GridSearchCV, RandomizedSearchCV
-from typing import Union, Type
 
 
-def evaluate_tuning_results(tuner: Union[Type[RandomizedSearchCV], Type[GridSearchCV]]) -> None: 
+def evaluate_tuning_results(
+    tuner: Union[Type[RandomizedSearchCV], Type[GridSearchCV]]
+) -> None:
     print(
-    f'''
+        f"""
     TUNING RESULTS
     ####################################
     ESTIMATOR: {tuner.estimator}
@@ -18,12 +28,13 @@ def evaluate_tuning_results(tuner: Union[Type[RandomizedSearchCV], Type[GridSear
     AVERAGE TRAIN SD: {tuner.cv_results_["std_train_score"].mean():.2%}
     AVERAGE TEST SCORE: {tuner.cv_results_["mean_test_score"].mean():.2%}
     AVERAGE TEST SD: {tuner.cv_results_["std_test_score"].mean():.2%}
-    ''')
+    """
+    )
 
 
-def evaluate_report(y_test: pd.Series, y_pred: np.ndarray) -> None: 
+def evaluate_report(y_test: pd.Series, y_pred: np.ndarray) -> None:
     print(
-    f'''
+        f"""
     PERFORMANCE 
     ####################################
     ACCURACY: {accuracy_score(y_test, y_pred):.2%}
@@ -31,10 +42,13 @@ def evaluate_report(y_test: pd.Series, y_pred: np.ndarray) -> None:
     RECALL: {recall_score(y_test, y_pred):.2%}
     F1: {f1_score(y_test, y_pred):.2%}
     ROC AUC: {roc_auc_score(y_test, y_pred):.2%}
-    ''')
+    """
+    )
 
-def main() -> None: 
+
+def main() -> None:
     pass
 
-if __name__ == '__main__': 
-    main() 
+
+if __name__ == "__main__":
+    main()
