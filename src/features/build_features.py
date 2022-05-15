@@ -97,22 +97,10 @@ def main():
         df_filled = KNNImputer().fit_transform(df_subset)
         df[col] = df_filled[:, -1]
 
-    X = df.drop(columns=config.TARGET)
-    y = df[config.TARGET]
+    train, test = train_test_split(df, test_size=0.2, random_state=config.RANDOM_STATE)
 
-    X_train, X_test, y_train, y_test = train_test_split(
-        X, y, test_size=0.2, random_state=config.RANDOM_STATE
-    )
-
-    for df, name in zip(
-        [X_train, X_test], ["X_train", "X_test"]
-    ):
+    for df, name in zip([train, test], ["train", "test"]):
         df.to_parquet(config.FIN_FILE_PATH / f"{name}.parquet")
-
-    for df, name in zip(
-        [y_train, y_test], ["y_train", "y_test"]
-    ): 
-        df.to_csv(config.FIN_FILE_PATH / f"{name}.csv")
 
     logger.info(f"DONE EXPORTS")
 
