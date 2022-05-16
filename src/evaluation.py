@@ -7,6 +7,7 @@ import pandas as pd
 from sklearn.metrics import (
     accuracy_score,
     f1_score,
+    fbeta_score,
     precision_score,
     recall_score,
     roc_auc_score,
@@ -14,9 +15,7 @@ from sklearn.metrics import (
 from sklearn.model_selection import GridSearchCV, RandomizedSearchCV
 
 
-def evaluate_tuning_results(
-    tuner: Union[Type[RandomizedSearchCV], Type[GridSearchCV]]
-) -> None:
+def evaluate_tuning(tuner: Union[Type[RandomizedSearchCV], Type[GridSearchCV]]) -> None:
     print(
         f"""
     TUNING RESULTS
@@ -24,15 +23,19 @@ def evaluate_tuning_results(
     ESTIMATOR: {tuner.estimator}
     BEST SCORE: {tuner.best_score_:.2%}
     BEST PARAMS: {tuner.best_params_}
-    AVERAGE TRAIN SCORE: {tuner.cv_results_["mean_train_score"].mean():.2%}
-    AVERAGE TRAIN SD: {tuner.cv_results_["std_train_score"].mean():.2%}
-    AVERAGE TEST SCORE: {tuner.cv_results_["mean_test_score"].mean():.2%}
-    AVERAGE TEST SD: {tuner.cv_results_["std_test_score"].mean():.2%}
+    TRAIN SCORE: {tuner.cv_results_["mean_train_AUC"][tuner.best_index_]:.2%}
+    TRAIN SD: {tuner.cv_results_["std_train_AUC"][tuner.best_index_]:.2%}
+    TEST SCORE: {tuner.cv_results_["mean_test_AUC"][tuner.best_index_]:.2%}
+    TEST SD: {tuner.cv_results_["std_test_AUC"][tuner.best_index_]:.2%}
+    TRAIN F2: {tuner.cv_results_['mean_train_F2'][tuner.best_index_]:.2%}
+    TEST F2: {tuner.cv_results_['mean_test_F2'][tuner.best_index_]:.2%}  
     """
     )
 
 
-def evaluate_report(y_test: pd.Series, y_pred: np.ndarray) -> None:
+def evaluate_report(
+    y_test: pd.Series, y_pred: np.ndarray, y_pred_prob: np.ndarray
+) -> None:
     print(
         f"""
     PERFORMANCE 
@@ -40,8 +43,9 @@ def evaluate_report(y_test: pd.Series, y_pred: np.ndarray) -> None:
     ACCURACY: {accuracy_score(y_test, y_pred):.2%}
     PRECISION: {precision_score(y_test, y_pred):.2%}
     RECALL: {recall_score(y_test, y_pred):.2%}
-    F1: {f1_score(y_test, y_pred):.2%}
-    ROC AUC: {roc_auc_score(y_test, y_pred):.2%}
+    F1: {f1_score(y_test, y_pred_prob):.2%}
+    F2: {fbeta_score(y_test, y_pred_prob, beta=2):.2%}
+    ROC AUC: {roc_auc_score(y_test, y_pred_prob):.2%}
     """
     )
 
