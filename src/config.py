@@ -2,6 +2,9 @@
 import os
 from pathlib import Path
 
+from sklearn.metrics import fbeta_score, make_scorer
+from sklearn.model_selection import ShuffleSplit
+
 # epochs to train on
 EPOCHS = 10
 
@@ -36,7 +39,12 @@ DEFAULT_DASHES = (1, 5)
 # ML
 RANDOM_STATE = 123
 N_JOBS = -1
+N_SPLITS = 5
 TARGET = "status"
+SCORER = {"AUC": "roc_auc", "F2": make_scorer(fbeta_score, beta=2)}
+CV_SPLIT = ShuffleSplit(
+    n_splits=5, test_size=0.2, train_size=0.8, random_state=RANDOM_STATE
+)
 
 
 def main() -> None:
