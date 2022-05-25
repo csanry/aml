@@ -42,8 +42,6 @@ def train(X_train, y_train, scorer, cv_split):
 
     knn_cv.fit(X_train, y_train)
 
-    
-
     n_neighbors, n_components = (
         knn_cv.best_params_.get("knn__n_neighbors"),
         knn_cv.best_params_.get("pca__n_components"),
@@ -77,22 +75,3 @@ def evaluate(X_test, y_test, knn_cv, knn_best_pipe):
     with open(filename, "wb") as file:
         pickle.dump(knn_best_pipe, file)
 
-
-# def main():
-
-#     logger = logging.getLogger()
-
-#     scorer = config.SCORER
-#     cv_split = config.CV_SPLIT
-
-#     X_train, X_test, y_train, y_test = helpers.read_files()
-
-#     logger.info("HYPERPARAMETER TUNING")
-
-#     logger.info("DONE")
-
-
-# if __name__ == "__main__":
-#     log_fmt = "%(asctime)s:%(name)s:%(levelname)s - %(message)s"
-#     logging.basicConfig(level=logging.INFO, format=log_fmt)
-#     main()

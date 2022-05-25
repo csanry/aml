@@ -23,11 +23,11 @@ def train_all():
     X_train, X_test, y_train, y_test = helpers.read_files()
 
     model_options = [
-        # adaboost,
-        # gbm,
-        # log_reg,
-        # rf,
-        # nca,
+        adaboost,
+        gbm,
+        log_reg,
+        rf,
+        nca,
         train_svm
 
     ]
