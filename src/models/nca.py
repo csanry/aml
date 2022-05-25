@@ -13,25 +13,7 @@ from src import config, evaluation, helpers
 warnings.filterwarnings("ignore")
 
 
-def train():
-    pass
-
-
-def evaluate():
-    pass
-
-
-def main():
-
-    logger = logging.getLogger()
-
-    scorer = config.SCORER
-    cv_split = config.CV_SPLIT
-
-    X_train, X_test, y_train, y_test = helpers.read_files()
-
-    logger.info("HYPERPARAMETER TUNING")
-
+def train(X_train, y_train, scorer, cv_split):
     # Setup the hyperparameter grid
     knn_param_grid = {
         "pca__n_components": [10, 15],
@@ -60,7 +42,7 @@ def main():
 
     knn_cv.fit(X_train, y_train)
 
-    evaluation.evaluate_tuning(tuner=knn_cv)
+    
 
     n_neighbors, n_components = (
         knn_cv.best_params_.get("knn__n_neighbors"),
@@ -78,6 +60,12 @@ def main():
 
     knn_best_pipe.fit(X_train, y_train)
 
+    return knn_cv, knn_best_pipe
+
+
+def evaluate(X_test, y_test, knn_cv, knn_best_pipe):
+
+    evaluation.evaluate_tuning(tuner=knn_cv)
     knn_y_pred_prob = knn_best_pipe.predict_proba(X_test)[:, 1]
     knn_y_pred = knn_best_pipe.predict(X_test)
 
@@ -89,10 +77,22 @@ def main():
     with open(filename, "wb") as file:
         pickle.dump(knn_best_pipe, file)
 
-    logger.info("DONE")
+
+# def main():
+
+#     logger = logging.getLogger()
+
+#     scorer = config.SCORER
+#     cv_split = config.CV_SPLIT
+
+#     X_train, X_test, y_train, y_test = helpers.read_files()
+
+#     logger.info("HYPERPARAMETER TUNING")
+
+#     logger.info("DONE")
 
 
-if __name__ == "__main__":
-    log_fmt = "%(asctime)s:%(name)s:%(levelname)s - %(message)s"
-    logging.basicConfig(level=logging.INFO, format=log_fmt)
-    main()
+# if __name__ == "__main__":
+#     log_fmt = "%(asctime)s:%(name)s:%(levelname)s - %(message)s"
+#     logging.basicConfig(level=logging.INFO, format=log_fmt)
+#     main()

@@ -39,13 +39,15 @@ def train(X_train, y_train, scorer, cv_split):
 
     adaboost_best = adaboost_cv.best_estimator_
 
-    evaluation.evaluate_tuning(tuner=adaboost_cv)
-
     # build the pipeline
     adaboost_best_pipe = Pipeline([("adaboost", adaboost_best)])
 
     adaboost_best_pipe.fit(X_train, y_train)
 
+    return adaboost_cv, adaboost_best_pipe
+
+def evaluate(X_test, y_test, adaboost_cv, adaboost_best_pipe):
+    evaluation.evaluate_tuning(tuner=adaboost_cv)
     adaboost_y_pred_prob = adaboost_best_pipe.predict_proba(X_test)[:, 1]
     adaboost_y_pred = adaboost_best_pipe.predict(X_test)
 
@@ -57,16 +59,4 @@ def train(X_train, y_train, scorer, cv_split):
     with open(filename, "wb") as file:
         pickle.dump(adaboost_best_pipe, file)
 
-    return adaboost_cv, adaboost_best
 
-
-def evaluate(X_test, y_test, adaboost_cv, adaboost_best):
-    pass
-
-
-def main():
-    pass
-
-
-if __name__ == "__main__":
-    pass

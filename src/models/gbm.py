@@ -52,13 +52,17 @@ def train(X_train, y_train, scorer, cv_split):
 
     gbm_best_pipe = gbm_cv.best_estimator_
 
-    evaluation.evaluate_tuning(tuner=gbm_cv)
-
     # refit the pipeline
     gbm_best_pipe.fit(X_train, y_train)
 
+    return gbm_cv, gbm_best_pipe
+
+
+def evaluate(X_test, y_test, gbm_cv, gbm_best_pipe):
     gbm_y_pred_prob = gbm_best_pipe.predict_proba(X_test)[:, 1]
     gbm_y_pred = gbm_best_pipe.predict(X_test)
+
+    evaluation.evaluate_tuning(tuner=gbm_cv)
 
     evaluation.evaluate_report(
         y_test=y_test, y_pred=gbm_y_pred, y_pred_prob=gbm_y_pred_prob
@@ -67,17 +71,3 @@ def train(X_train, y_train, scorer, cv_split):
     filename = config.MODEL_OUTPUT_PATH / "gbm.pickle"
     with open(filename, "wb") as file:
         pickle.dump(gbm_best_pipe, file)
-
-    return gbm_cv, gbm_best_pipe
-
-
-def evaluate(X_test, y_test, gbm_cv, gbm_best_pipe):
-    pass
-
-
-def main():
-    pass
-
-
-if __name__ == "__main__":
-    main()

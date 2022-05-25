@@ -9,4 +9,5 @@ models = {
     "nca": load_model(base_path / "nca.pickle"),
     "rf": load_model(base_path / "rf.pickle"),
     "ada": load_model(base_path / "adaboost.pickle"),
+    "svm": load_model(base_path / "svm.pickle")
 }

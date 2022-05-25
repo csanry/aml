@@ -7,7 +7,7 @@ from sklearn.ensemble import AdaBoostClassifier
 from sklearn.model_selection import GridSearchCV
 from sklearn.pipeline import Pipeline
 from src import config, evaluation, helpers
-from src.models import adaboost, gbm, log_reg, rf, train_nca
+from src.models import adaboost, gbm, log_reg, rf, nca, train_svm
 
 
 def train_all():
@@ -25,7 +25,11 @@ def train_all():
     model_options = [
         # adaboost,
         # gbm,
-        log_reg,
+        # log_reg,
+        # rf,
+        # nca,
+        train_svm
+
     ]
 
     for model in model_options:
@@ -33,7 +37,7 @@ def train_all():
         cv, best_model = model.train(X_train, y_train, scorer, cv_split)
 
         logger.info(f"EVALUATION {model.__name__}")
-        model.evaluate(X_train, X_test, y_train, y_test, cv, best_model)
+        model.evaluate(X_test, y_test, cv, best_model)
 
         logger.info(f"DONE {model.__name__}")
 

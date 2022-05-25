@@ -54,15 +54,15 @@ def train(X_train, y_train, scorer, cv_split):
 
     rf_best_pipe = rf_cv.best_estimator_
 
+    # refit the pipeline
+    rf_best_pipe.fit(X_train, y_train)
+
     return rf_cv, rf_best_pipe
 
 
-def evaluate(X_train, X_test, y_train, y_test, rf_cv, rf_best_pipe):
+def evaluate(X_test, y_test, rf_cv, rf_best_pipe):
 
     evaluation.evaluate_tuning(tuner=rf_cv)
-
-    # refit the pipeline
-    rf_best_pipe.fit(X_train, y_train)
 
     rf_y_pred_prob = rf_best_pipe.predict_proba(X_test)[:, 1]
     rf_y_pred = rf_best_pipe.predict(X_test)
@@ -75,10 +75,3 @@ def evaluate(X_train, X_test, y_train, y_test, rf_cv, rf_best_pipe):
     with open(filename, "wb") as file:
         pickle.dump(rf_best_pipe, file)
 
-
-def main():
-    pass
-
-
-if __name__ == "__main__":
-    main()

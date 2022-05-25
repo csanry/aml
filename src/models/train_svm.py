@@ -11,17 +11,7 @@ from src import config, evaluation, helpers
 
 warnings.filterwarnings("ignore")
 
-
-def main():
-
-    logger = logging.getLogger()
-
-    scorer = config.SCORER
-    cv_split = config.CV_SPLIT
-
-    X_train, X_test, y_train, y_test = helpers.read_files()
-
-    logger.info("HYPERPARAMETER TUNING")
+def train(X_train, y_train, scorer, cv_split):
 
     # Setup the hyperparameter grid
     svm_param_grid = {
@@ -56,8 +46,6 @@ def main():
 
     svm_cv.fit(X_train, y_train)
 
-    evaluation.evaluate_tuning(tuner=svm_cv)
-
     n_components, C, kernel = (
         svm_cv.best_params_.get("pca__n_components"),
         svm_cv.best_params_.get("svm__C"),
@@ -82,9 +70,14 @@ def main():
 
     svm_best_pipe.fit(X_train, y_train)
 
+    return svm_cv, svm_best_pipe
+
+def evaluate(X_test, y_test, svm_cv, svm_best_pipe):
+
+    evaluation.evaluate_tuning(tuner=svm_cv)
     svm_y_pred_prob = svm_best_pipe.predict_proba(X_test)[:, 1]
     svm_y_pred = svm_best_pipe.predict(X_test)
-
+    
     evaluation.evaluate_report(
         y_test=y_test, y_pred=svm_y_pred, y_pred_prob=svm_y_pred_prob
     )
@@ -93,10 +86,3 @@ def main():
     with open(filename, "wb") as file:
         pickle.dump(svm_best_pipe, file)
 
-    logger.info("DONE")
-
-
-if __name__ == "__main__":
-    log_fmt = "%(asctime)s:%(name)s:%(levelname)s - %(message)s"
-    logging.basicConfig(level=logging.INFO, format=log_fmt)
-    main()
