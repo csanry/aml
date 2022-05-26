@@ -13,9 +13,9 @@ RUN apt update &&\
     wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh &&\
     mkdir root/.conda &&\
     sh Miniconda3-latest-Linux-x86_64.sh -b &&\
-    rm -f Miniconda3-latest-Linux-x86_64.sh
+    rm -f Miniconda3-latest-Linux-x86_64.sh 
 
-COPY . src/
+COPY . /src/
 
 RUN cd src &&\
-    conda create -y -n aml --file requirements.txt -c conda-forge
+    conda create -y -n aml --file requirements.txt -c conda-forge 

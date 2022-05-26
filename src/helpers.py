@@ -1,7 +1,10 @@
 # helpers.py
 import os
+import pickle
 import sys
-from typing import Any, Dict, Hashable, Iterable, List, Optional, Set, Tuple, Union
+from ast import Index
+from typing import (Any, Dict, Hashable, Iterable, List, Optional, Set, Tuple,
+                    Union)
 
 import matplotlib as mpl
 import matplotlib.pyplot as plt
@@ -9,6 +12,8 @@ import missingno as msno
 import pandas as pd
 import pandas.api.types as types
 import seaborn as sns
+
+from src import config
 
 
 def quick_eda(df: pd.DataFrame) -> None:
@@ -64,7 +69,7 @@ def get_numeric_columns(df: pd.DataFrame) -> List:
     return [col for col in df.columns if types.is_numeric_dtype(df[col])]
 
 
-def bin_values(df: pd.DataFrame, col: str) -> None:
+def bin_values(df: pd.DataFrame, col: str) -> pd.Series:
     """Bins values of a numeric column into 5 quantiles, then fills in missing 
 
     Parameters
@@ -79,9 +84,18 @@ def bin_values(df: pd.DataFrame, col: str) -> None:
     -------
     None
     """
-    df[f"{col}_binned"] = pd.qcut(df[col], q=5, labels=["1", "2", "3", "4", "5"])
-    df[f"{col}_binned"] = df[f"{col}_binned"].astype("object")
-    df[f"{col}_binned"].fillna("missing", inplace=True)
+    column_binned = pd.qcut(df[col], q=5, labels=["1", "2", "3", "4", "5"])
+    column_binned = column_binned.astype("object")
+    column_binned = column_binned.fillna(value="na")
+    return column_binned
+
+
+def read_files():
+    train = pd.read_parquet(config.FIN_FILE_PATH / "train.parquet")
+    test = pd.read_parquet(config.FIN_FILE_PATH / "test.parquet")
+    X_train, y_train = train.drop(columns=config.TARGET), train[config.TARGET]
+    X_test, y_test = test.drop(columns=config.TARGET), test[config.TARGET]
+    return (X_train, X_test, y_train, y_test)
 
 
 def convert_to_dtype(col: pd.Series, type: str = "categorical") -> pd.Series:
@@ -156,7 +170,7 @@ def return_value_counts(df: pd.DataFrame) -> None:
         )
 
 
-def standardize_cols(column_list: List[str]) -> List[str]:
+def standardize_cols(column_list: Index) -> List[str]:
     """Transforms column names into a standardized format for data analysis
 
     Parameters
@@ -231,6 +245,11 @@ def get_dtypes(df: pd.DataFrame) -> Dict:
     Dictionary of column-dtype key-value pairs
     """
     return df.dtypes.to_dict()
+
+
+def load_model(path_to_file):
+    with open(path_to_file, "rb") as file:
+        return pickle.load(file)
 
 
 def main() -> None:
