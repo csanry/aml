@@ -42,21 +42,7 @@ def train(X_train, y_train, scorer, cv_split):
 
     knn_cv.fit(X_train, y_train)
 
-    n_neighbors, n_components = (
-        knn_cv.best_params_.get("knn__n_neighbors"),
-        knn_cv.best_params_.get("pca__n_components"),
-    )
-
-    knn_best = KNeighborsClassifier(n_neighbors=n_neighbors, n_jobs=config.N_JOBS,)
-
-    pca_best = PCA(n_components=n_components, random_state=config.RANDOM_STATE,)
-
-    # build the best pipeline
-    knn_best_pipe = Pipeline(
-        [("mm", mm_scale), ("pca_best", pca_best), ("knn_best", knn_best)]
-    )
-
-    knn_best_pipe.fit(X_train, y_train)
+    knn_best_pipe = knn_cv.best_estimator_
 
     return knn_cv, knn_best_pipe
 

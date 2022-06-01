@@ -5,7 +5,6 @@
 #################################################################################
 
 PROJECT_DIR := $(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
-BUCKET = [OPTIONAL] your-bucket-for-syncing-data (do not include 's3://')
 PROFILE = default
 PROJECT_NAME = aml
 PYTHON_INTERPRETER = python3
@@ -24,16 +23,6 @@ endif
 requirements: test_environment
 	$(PYTHON_INTERPRETER) -m pip install -U pip setuptools wheel
 	$(PYTHON_INTERPRETER) -m pip install -r requirements.txt
-
-## Make Dataset
-data: requirements
-	$(PYTHON_INTERPRETER) src/data/make_dataset.py data/raw data/processed
-
-## Delete all compiled Python files
-clean:
-	find . -type f -name "*.py[co]" -delete
-	find . -type d -name "__pycache__" -delete
-	find . -type d -name ".ipynb_checkpoints" -delete
 
 
 ## Lint using flake8
@@ -84,7 +73,39 @@ test_environment:
 ## Setup packages
 pkg: 
 	pip install -e .
+
+
+## Push updated docker
+docker_push: 
+	docker build -t csanry/aml:latest 
+	docker login 
+	docker push csanry/aml:latest
+
+
+## Update docker 
+docker_update:
+	docker login 
+	docker pull csanry/aml:latest
+	docker-compose up 
+
+
+## Delete all compiled Python files
+clean:
+	find . -type f -name "*.py[co]" -delete
+	find . -type d -name "__pycache__" -delete
+	find . -type d -name ".ipynb_checkpoints" -delete
+
+
+## Pre-commits 
+commits: 
 	pre-commit install
+	pre-commit run --all-files
+
+
+## Run pipe
+pipe: 
+	@echo "Pipe running"
+
 
 
 #################################################################################
@@ -93,21 +114,7 @@ pkg:
 
 .DEFAULT_GOAL := help
 
-# Inspired by <http://marmelab.com/blog/2016/02/29/auto-documented-makefile.html>
-# sed script explained:
-# /^##/:
-# 	* save line in hold space
-# 	* purge line
-# 	* Loop:
-# 		* append newline + line to hold space
-# 		* go to next line
-# 		* if line starts with doc comment, strip comment character off and loop
-# 	* remove target prerequisites
-# 	* append hold space (+ newline) to line
-# 	* replace newline plus comments by `---`
-# 	* print line
-# Separate expressions are necessary because labels cannot be delimited by
-# semicolon; see <http://stackoverflow.com/a/11799865/1968>
+
 .PHONY: help
 help:
 	@echo "$$(tput bold)Available rules:$$(tput sgr0)"

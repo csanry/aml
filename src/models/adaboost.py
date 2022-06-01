@@ -20,9 +20,12 @@ def train(X_train, y_train, scorer, cv_split):
         "n_estimators": np.arange(50, 300, 25),
     }
 
+    # build the pipeline
+    adaboost_pipe = Pipeline([("adaboost", adaboost_clf)])
+
     # Cross validate model with RandomizedSearch
     adaboost_cv = GridSearchCV(
-        estimator=adaboost_clf,
+        estimator=adaboost_pipe,
         param_grid=adaboost_param_grid,
         scoring=scorer,
         refit="F2",
@@ -32,19 +35,12 @@ def train(X_train, y_train, scorer, cv_split):
         verbose=10,
     )
 
-    # build the pipeline
-    adaboost_pipe = Pipeline([("adaboost", adaboost_cv)])
+    adaboost_cv.fit(X_train, y_train)
 
-    adaboost_pipe.fit(X_train, y_train)
-
-    adaboost_best = adaboost_cv.best_estimator_
-
-    # build the pipeline
-    adaboost_best_pipe = Pipeline([("adaboost", adaboost_best)])
-
-    adaboost_best_pipe.fit(X_train, y_train)
+    adaboost_best_pipe = adaboost_cv.best_estimator_
 
     return adaboost_cv, adaboost_best_pipe
+
 
 def evaluate(X_test, y_test, adaboost_cv, adaboost_best_pipe):
     evaluation.evaluate_tuning(tuner=adaboost_cv)
@@ -58,5 +54,4 @@ def evaluate(X_test, y_test, adaboost_cv, adaboost_best_pipe):
     filename = config.MODEL_OUTPUT_PATH / "adaboost.pickle"
     with open(filename, "wb") as file:
         pickle.dump(adaboost_best_pipe, file)
-
 
