@@ -52,9 +52,6 @@ def train(X_train, y_train, scorer, cv_split):
 
     gbm_best_pipe = gbm_cv.best_estimator_
 
-    # refit the pipeline
-    gbm_best_pipe.fit(X_train, y_train)
-
     return gbm_cv, gbm_best_pipe
 
 

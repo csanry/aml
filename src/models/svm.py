@@ -11,6 +11,7 @@ from src import config, evaluation, helpers
 
 warnings.filterwarnings("ignore")
 
+
 def train(X_train, y_train, scorer, cv_split):
 
     # Setup the hyperparameter grid
@@ -46,38 +47,17 @@ def train(X_train, y_train, scorer, cv_split):
 
     svm_cv.fit(X_train, y_train)
 
-    n_components, C, kernel = (
-        svm_cv.best_params_.get("pca__n_components"),
-        svm_cv.best_params_.get("svm__C"),
-        svm_cv.best_params_.get("svm__kernel"),
-    )
-
-    svm_best = SVC(
-        C=C,
-        kernel=kernel,
-        probability=True,
-        max_iter=5000,
-        random_state=config.RANDOM_STATE,
-        verbose=True,
-    )
-
-    pca_best = PCA(n_components=n_components, random_state=config.RANDOM_STATE,)
-
-    # build the best pipeline
-    svm_best_pipe = Pipeline(
-        [("mm", mm_scale), ("pca_best", pca_best), ("svm_best", svm_best)]
-    )
-
-    svm_best_pipe.fit(X_train, y_train)
+    svm_best_pipe = svm_cv.best_estimator_
 
     return svm_cv, svm_best_pipe
+
 
 def evaluate(X_test, y_test, svm_cv, svm_best_pipe):
 
     evaluation.evaluate_tuning(tuner=svm_cv)
     svm_y_pred_prob = svm_best_pipe.predict_proba(X_test)[:, 1]
     svm_y_pred = svm_best_pipe.predict(X_test)
-    
+
     evaluation.evaluate_report(
         y_test=y_test, y_pred=svm_y_pred, y_pred_prob=svm_y_pred_prob
     )

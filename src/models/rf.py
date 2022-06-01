@@ -54,9 +54,6 @@ def train(X_train, y_train, scorer, cv_split):
 
     rf_best_pipe = rf_cv.best_estimator_
 
-    # refit the pipeline
-    rf_best_pipe.fit(X_train, y_train)
-
     return rf_cv, rf_best_pipe
 
 
