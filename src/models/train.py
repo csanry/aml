@@ -1,13 +1,7 @@
 import logging
-import pickle
-import warnings
 
-import numpy as np
-from sklearn.ensemble import AdaBoostClassifier
-from sklearn.model_selection import GridSearchCV
-from sklearn.pipeline import Pipeline
-from src import config, evaluation, helpers
-from src.models import adaboost, gbm, log_reg, rf, nca, train_svm
+from src import config, helpers
+from src.models import adaboost, gbm, log_reg, nca, rf, svm
 
 
 def train_all():
@@ -22,15 +16,7 @@ def train_all():
 
     X_train, X_test, y_train, y_test = helpers.read_files()
 
-    model_options = [
-        adaboost,
-        gbm,
-        log_reg,
-        rf,
-        nca,
-        train_svm
-
-    ]
+    model_options = [adaboost, gbm, log_reg, rf, nca, svm]
 
     for model in model_options:
         logger.info(f"TRAINING {model.__name__}")
