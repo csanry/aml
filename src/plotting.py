@@ -5,6 +5,8 @@ import matplotlib as mpl
 import matplotlib.pyplot as plt
 import pandas as pd
 import seaborn as sns
+import numpy.typing as npt
+
 
 from src import config
 
@@ -345,6 +347,17 @@ def plot_corr(
     ax.set_title("Correlation plot", fontweight="bold")
     ax.set_yticklabels(ax.get_yticklabels(), rotation=(90 if rotate_ylabels else 0))
     ax.set_xticklabels(ax.get_xticklabels(), rotation=(90 if rotate_xlabels else 0))
+    plt.show()
+
+
+def plot_roc_curve(fpr: npt.ArrayLike, tpr: npt.ArrayLike, name: str) -> None:
+    """Plot ROC curve
+    """
+    plt.plot([0, 1], [0, 1], ls = '--')
+    plt.plot(fpr, tpr, marker = '.')
+    plt.xlabel('FPR')
+    plt.ylabel('TPR')
+    plt.title(f'{name} ROC Curve')
     plt.show()
 
 

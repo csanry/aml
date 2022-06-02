@@ -5,7 +5,8 @@ import numpy as np
 import xgboost as xgb
 from sklearn.model_selection import RandomizedSearchCV
 from sklearn.pipeline import Pipeline
-from src import config, evaluation
+from sklearn.metrics import roc_curve
+from src import config, evaluation, plotting
 
 warnings.filterwarnings("ignore")
 
@@ -67,6 +68,9 @@ def evaluate(X_test, y_test, rf_cv, rf_best_pipe):
     evaluation.evaluate_report(
         y_test=y_test, y_pred=rf_y_pred, y_pred_prob=rf_y_pred_prob
     )
+
+    fpr, tpr, thresholds = roc_curve(y_test, rf_y_pred_prob)
+    plotting.plot_roc_curve(fpr, tpr, "Random Forest")
 
     filename = config.MODEL_OUTPUT_PATH / "rf.pickle"
     with open(filename, "wb") as file:

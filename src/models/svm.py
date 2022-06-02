@@ -7,7 +7,8 @@ from sklearn.model_selection import RandomizedSearchCV
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.svm import SVC
-from src import config, evaluation, helpers
+from sklearn.metrics import roc_curve
+from src import config, evaluation, plotting
 
 warnings.filterwarnings("ignore")
 
@@ -61,6 +62,10 @@ def evaluate(X_test, y_test, svm_cv, svm_best_pipe):
     evaluation.evaluate_report(
         y_test=y_test, y_pred=svm_y_pred, y_pred_prob=svm_y_pred_prob
     )
+
+    fpr, tpr, thresholds = roc_curve(y_test, svm_y_pred_prob)
+    plotting.plot_roc_curve(fpr, tpr, "SVM")
+
 
     filename = config.MODEL_OUTPUT_PATH / "svm.pickle"
     with open(filename, "wb") as file:
