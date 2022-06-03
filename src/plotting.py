@@ -350,6 +350,7 @@ def plot_corr(
     plt.show()
 
 
+
 def plot_roc_curve(fpr: npt.ArrayLike, tpr: npt.ArrayLike, name: str) -> None:
     """Plot ROC curve
     """
