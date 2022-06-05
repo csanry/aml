@@ -3,7 +3,6 @@ import warnings
 
 import numpy as np
 from sklearn.ensemble import AdaBoostClassifier
-from sklearn.metrics import roc_curve
 from sklearn.model_selection import GridSearchCV
 from sklearn.pipeline import Pipeline
 from src import config, evaluation, plotting
@@ -48,12 +47,11 @@ def evaluate(X_test, y_test, adaboost_cv, adaboost_best_pipe):
     adaboost_y_pred_prob = adaboost_best_pipe.predict_proba(X_test)[:, 1]
     adaboost_y_pred = adaboost_best_pipe.predict(X_test)
 
-    evaluation.evaluate_report(
+    report = evaluation.evaluate_report(
         y_test=y_test, y_pred=adaboost_y_pred, y_pred_prob=adaboost_y_pred_prob
     )
 
-    fpr, tpr, thresholds = roc_curve(y_test, adaboost_y_pred_prob)
-    plotting.plot_roc_curve(fpr, tpr, "adaboost")
+    plotting.plot_roc_curve(report["roc"][0], report["roc"][1], "adaboost", report["auroc"])
 
     filename = config.MODEL_OUTPUT_PATH / "adaboost.pickle"
     with open(filename, "wb") as file:

@@ -348,15 +348,16 @@ def plot_corr(
 
 
 
-def plot_roc_curve(fpr: npt.ArrayLike, tpr: npt.ArrayLike, name: str) -> None:
+def plot_roc_curve(fpr: npt.ArrayLike, tpr: npt.ArrayLike, name: str, auc: float) -> None:
     """Plot ROC curve
     """
 
-    plt.plot([0, 1], [0, 1], ls="--")
-    plt.plot(fpr, tpr, marker=".")
+    plt.plot([0, 1], [0, 1], ls="--", color="black")
+    plt.plot(fpr, tpr, linestyle="solid", color="blue")
     plt.xlabel("FPR")
     plt.ylabel("TPR")
     plt.title(f"{name} ROC curve")
+    plt.text(0.95, 0.01, f"AUC: {auc:.2%}", verticalalignment="bottom", horizontalalignment="right")
     plt.savefig(f"{config.REPORTS_PATH}/roc/{name}.jpeg")
     plt.show()
 

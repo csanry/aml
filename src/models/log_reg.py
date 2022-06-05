@@ -5,7 +5,6 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import GridSearchCV
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import MinMaxScaler
-from sklearn.metrics import roc_curve
 from src import config, evaluation, plotting
 
 warnings.filterwarnings("ignore")
@@ -61,12 +60,11 @@ def evaluate(X_test, y_test, log_reg_cv, log_reg_best_pipe):
 
     evaluation.evaluate_tuning(tuner=log_reg_cv)
 
-    evaluation.evaluate_report(
+    report = evaluation.evaluate_report(
         y_test=y_test, y_pred=log_reg_y_pred, y_pred_prob=log_reg_y_pred_prob
     )
 
-    fpr, tpr, thresholds = roc_curve(y_test, log_reg_y_pred_prob)
-    plotting.plot_roc_curve(fpr, tpr, "log_reg")
+    plotting.plot_roc_curve(report["roc"][0], report["roc"][1], "log_reg", report["auroc"])
 
 
     filename = config.MODEL_OUTPUT_PATH / "log_reg.pickle"
