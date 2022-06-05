@@ -3,12 +3,13 @@ import pickle
 import warnings
 
 import numpy as np
+from sklearn import metrics
 from sklearn.decomposition import PCA
 from sklearn.model_selection import GridSearchCV
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import MinMaxScaler
-from src import config, evaluation, helpers
+from src import config, evaluation, plotting
 
 warnings.filterwarnings("ignore")
 
@@ -56,6 +57,9 @@ def evaluate(X_test, y_test, knn_cv, knn_best_pipe):
     evaluation.evaluate_report(
         y_test=y_test, y_pred=knn_y_pred, y_pred_prob=knn_y_pred_prob
     )
+
+    cf_matrix = metrics.confusion_matrix(y_test, knn_y_pred)
+    plotting.plot_confusion_matrix(cf_matrix, "knn")
 
     filename = config.MODEL_OUTPUT_PATH / "knn.pickle"
     with open(filename, "wb") as file:

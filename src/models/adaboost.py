@@ -3,9 +3,10 @@ import warnings
 
 import numpy as np
 from sklearn.ensemble import AdaBoostClassifier
+from sklearn import metrics
 from sklearn.model_selection import GridSearchCV
 from sklearn.pipeline import Pipeline
-from src import config, evaluation
+from src import config, evaluation, plotting
 
 warnings.filterwarnings("ignore")
 
@@ -50,6 +51,10 @@ def evaluate(X_test, y_test, adaboost_cv, adaboost_best_pipe):
     evaluation.evaluate_report(
         y_test=y_test, y_pred=adaboost_y_pred, y_pred_prob=adaboost_y_pred_prob
     )
+
+    cf_matrix = metrics.confusion_matrix(y_test, adaboost_y_pred)
+    plotting.plot_confusion_matrix(cf_matrix, "adaboost")
+
 
     filename = config.MODEL_OUTPUT_PATH / "adaboost.pickle"
     with open(filename, "wb") as file:

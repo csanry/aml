@@ -5,6 +5,8 @@ import matplotlib as mpl
 import matplotlib.pyplot as plt
 import pandas as pd
 import seaborn as sns
+import numpy as np
+import numpy.typing as npt
 
 from src import config
 
@@ -345,6 +347,26 @@ def plot_corr(
     ax.set_title("Correlation plot", fontweight="bold")
     ax.set_yticklabels(ax.get_yticklabels(), rotation=(90 if rotate_ylabels else 0))
     ax.set_xticklabels(ax.get_xticklabels(), rotation=(90 if rotate_xlabels else 0))
+    plt.show()
+
+
+
+def plot_confusion_matrix(cf_matrix: npt.NDArray, model_name: str) -> None:
+    fig, ax = plt.subplots(figsize=(12, 8))
+
+    sns.heatmap(np.eye(2), annot=cf_matrix, fmt='g', annot_kws={'size': 50},
+            cmap=sns.color_palette(['tomato', 'palegreen'], as_cmap=True), cbar=False,
+            yticklabels=['No default', 'Default'], xticklabels=['No default', 'Default'], ax=ax)
+
+    additional_texts = ['(True Negative)', '(False Positive)', '(False Negative)', '(True Positive)']
+    for text_elt, additional_text in zip(ax.texts, additional_texts):
+        ax.text(*text_elt.get_position(), '\n' + additional_text, color=text_elt.get_color(),
+                ha='center', va='top', size=24)
+
+    ax.set_title(f"{model_name} confusion matrix", size=24, pad=20)
+    ax.set_xlabel('Predicted Values', size=20)
+    ax.set_ylabel('Actual Values', size=20)
+    plt.savefig(f"{config.REPORTS_PATH}/confusion_matrix/{model_name}.jpeg")
     plt.show()
 
 

@@ -1,11 +1,11 @@
 import pickle
 import warnings
-
+from sklearn import metrics
 from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import GridSearchCV
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import MinMaxScaler
-from src import config, evaluation
+from src import config, evaluation, plotting
 
 warnings.filterwarnings("ignore")
 
@@ -63,6 +63,9 @@ def evaluate(X_test, y_test, log_reg_cv, log_reg_best_pipe):
     evaluation.evaluate_report(
         y_test=y_test, y_pred=log_reg_y_pred, y_pred_prob=log_reg_y_pred_prob
     )
+
+    cf_matrix = metrics.confusion_matrix(y_test, log_reg_y_pred)
+    plotting.plot_confusion_matrix(cf_matrix, "log_reg")
 
     filename = config.MODEL_OUTPUT_PATH / "log_reg.pickle"
     with open(filename, "wb") as file:

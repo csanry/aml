@@ -3,9 +3,10 @@ import warnings
 
 import numpy as np
 import xgboost as xgb
+from sklearn import metrics
 from sklearn.model_selection import RandomizedSearchCV
 from sklearn.pipeline import Pipeline
-from src import config, evaluation
+from src import config, evaluation, plotting
 
 warnings.filterwarnings("ignore")
 
@@ -67,6 +68,9 @@ def evaluate(X_test, y_test, rf_cv, rf_best_pipe):
     evaluation.evaluate_report(
         y_test=y_test, y_pred=rf_y_pred, y_pred_prob=rf_y_pred_prob
     )
+
+    cf_matrix = metrics.confusion_matrix(y_test, rf_y_pred)
+    plotting.plot_confusion_matrix(cf_matrix, "rf")
 
     filename = config.MODEL_OUTPUT_PATH / "rf.pickle"
     with open(filename, "wb") as file:

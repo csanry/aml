@@ -2,12 +2,13 @@ import logging
 import pickle
 import warnings
 
+from sklearn import metrics
 from sklearn.decomposition import PCA
 from sklearn.model_selection import RandomizedSearchCV
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.svm import SVC
-from src import config, evaluation, helpers
+from src import config, evaluation, plotting
 
 warnings.filterwarnings("ignore")
 
@@ -61,6 +62,9 @@ def evaluate(X_test, y_test, svm_cv, svm_best_pipe):
     evaluation.evaluate_report(
         y_test=y_test, y_pred=svm_y_pred, y_pred_prob=svm_y_pred_prob
     )
+
+    cf_matrix = metrics.confusion_matrix(y_test, svm_y_pred)
+    plotting.plot_confusion_matrix(cf_matrix, "svm")
 
     filename = config.MODEL_OUTPUT_PATH / "svm.pickle"
     with open(filename, "wb") as file:
