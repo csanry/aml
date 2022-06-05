@@ -70,7 +70,7 @@ def evaluate(X_test, y_test, rf_cv, rf_best_pipe):
     )
 
     fpr, tpr, thresholds = roc_curve(y_test, rf_y_pred_prob)
-    plotting.plot_roc_curve(fpr, tpr, "Random Forest")
+    plotting.plot_roc_curve(fpr, tpr, "rf")
 
     filename = config.MODEL_OUTPUT_PATH / "rf.pickle"
     with open(filename, "wb") as file:

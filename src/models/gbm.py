@@ -67,7 +67,7 @@ def evaluate(X_test, y_test, gbm_cv, gbm_best_pipe):
     )
 
     fpr, tpr, thresholds = roc_curve(y_test, gbm_y_pred_prob)
-    plotting.plot_roc_curve(fpr, tpr, "GBM")
+    plotting.plot_roc_curve(fpr, tpr, "gbm")
 
 
     filename = config.MODEL_OUTPUT_PATH / "gbm.pickle"

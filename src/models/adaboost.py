@@ -53,7 +53,7 @@ def evaluate(X_test, y_test, adaboost_cv, adaboost_best_pipe):
     )
 
     fpr, tpr, thresholds = roc_curve(y_test, adaboost_y_pred_prob)
-    plotting.plot_roc_curve(fpr, tpr, "Adaboost")
+    plotting.plot_roc_curve(fpr, tpr, "adaboost")
 
     filename = config.MODEL_OUTPUT_PATH / "adaboost.pickle"
     with open(filename, "wb") as file:

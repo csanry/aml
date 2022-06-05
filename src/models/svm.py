@@ -64,7 +64,7 @@ def evaluate(X_test, y_test, svm_cv, svm_best_pipe):
     )
 
     fpr, tpr, thresholds = roc_curve(y_test, svm_y_pred_prob)
-    plotting.plot_roc_curve(fpr, tpr, "SVM")
+    plotting.plot_roc_curve(fpr, tpr, "svm")
 
 
     filename = config.MODEL_OUTPUT_PATH / "svm.pickle"

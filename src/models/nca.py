@@ -59,7 +59,7 @@ def evaluate(X_test, y_test, knn_cv, knn_best_pipe):
     )
 
     fpr, tpr, thresholds = roc_curve(y_test, knn_y_pred_prob)
-    plotting.plot_roc_curve(fpr, tpr, "KNN")
+    plotting.plot_roc_curve(fpr, tpr, "knn")
 
 
 

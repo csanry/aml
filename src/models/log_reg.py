@@ -66,7 +66,7 @@ def evaluate(X_test, y_test, log_reg_cv, log_reg_best_pipe):
     )
 
     fpr, tpr, thresholds = roc_curve(y_test, log_reg_y_pred_prob)
-    plotting.plot_roc_curve(fpr, tpr, "Logistic regression")
+    plotting.plot_roc_curve(fpr, tpr, "log_reg")
 
 
     filename = config.MODEL_OUTPUT_PATH / "log_reg.pickle"
