@@ -8,7 +8,7 @@ from sklearn.model_selection import GridSearchCV
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import MinMaxScaler
-from src import config, evaluation, helpers
+from src import config, evaluation, plotting
 
 warnings.filterwarnings("ignore")
 
@@ -53,9 +53,13 @@ def evaluate(X_test, y_test, knn_cv, knn_best_pipe):
     knn_y_pred_prob = knn_best_pipe.predict_proba(X_test)[:, 1]
     knn_y_pred = knn_best_pipe.predict(X_test)
 
-    evaluation.evaluate_report(
+    report = evaluation.evaluate_report(
         y_test=y_test, y_pred=knn_y_pred, y_pred_prob=knn_y_pred_prob
     )
+
+    plotting.plot_roc_curve(report["roc"][0], report["roc"][1], "knn", report["auroc"])
+
+
 
     filename = config.MODEL_OUTPUT_PATH / "knn.pickle"
     with open(filename, "wb") as file:

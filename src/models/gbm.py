@@ -5,7 +5,7 @@ import numpy as np
 import xgboost as xgb
 from sklearn.model_selection import RandomizedSearchCV
 from sklearn.pipeline import Pipeline
-from src import config, evaluation
+from src import config, evaluation, plotting
 
 warnings.filterwarnings("ignore")
 
@@ -61,9 +61,11 @@ def evaluate(X_test, y_test, gbm_cv, gbm_best_pipe):
 
     evaluation.evaluate_tuning(tuner=gbm_cv)
 
-    evaluation.evaluate_report(
+    report = evaluation.evaluate_report(
         y_test=y_test, y_pred=gbm_y_pred, y_pred_prob=gbm_y_pred_prob
     )
+
+    plotting.plot_roc_curve(report["roc"][0], report["roc"][1], "gbm", report["auroc"])
 
     filename = config.MODEL_OUTPUT_PATH / "gbm.pickle"
     with open(filename, "wb") as file:

@@ -1,8 +1,8 @@
-from typing import (Any, Dict, Hashable, Iterable, List, Optional, Set, Tuple,
-                    Union)
+from typing import Any, Dict, Hashable, Iterable, List, Optional, Set, Tuple, Union
 
 import matplotlib as mpl
 import matplotlib.pyplot as plt
+import numpy.typing as npt
 import pandas as pd
 import seaborn as sns
 
@@ -260,8 +260,7 @@ class plotviz:
         plt.show()
 
 
-def quick_plot(
-    df: pd.DataFrame, hue: str = None, diag_kind: str = "kde") -> None:
+def quick_plot(df: pd.DataFrame, hue: str = None, diag_kind: str = "kde") -> None:
     """Computes a quick summary plot of numeric values
 
     Parameters
@@ -302,7 +301,7 @@ def set_up_fig(nrows: int = 1, ncols: int = 1, figsize: Tuple = (16, 9)) -> None
     A figure and array of axes
 
     """
-    fig, ax = plt.subplots(figsize=figsize, nrows=nrows, ncols=nrows)
+    fig, ax = plt.subplots(figsize=figsize, nrows=nrows, ncols=ncols)
     for s in ["top", "right"]:
         ax.spines[s].set_visible(False)
     return fig, ax
@@ -346,6 +345,22 @@ def plot_corr(
     ax.set_yticklabels(ax.get_yticklabels(), rotation=(90 if rotate_ylabels else 0))
     ax.set_xticklabels(ax.get_xticklabels(), rotation=(90 if rotate_xlabels else 0))
     plt.show()
+
+
+
+def plot_roc_curve(fpr: npt.ArrayLike, tpr: npt.ArrayLike, name: str, auc: float) -> None:
+    """Plot ROC curve
+    """
+
+    plt.plot([0, 1], [0, 1], ls="--", color="black")
+    plt.plot(fpr, tpr, linestyle="solid", color="blue")
+    plt.xlabel("FPR")
+    plt.ylabel("TPR")
+    plt.title(f"{name} ROC curve")
+    plt.text(0.95, 0.01, f"AUC: {auc:.2%}", verticalalignment="bottom", horizontalalignment="right")
+    plt.savefig(f"{config.REPORTS_PATH}/roc/{name}.jpeg")
+    plt.show()
+
 
 
 def main() -> None:
