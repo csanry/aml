@@ -5,7 +5,6 @@ import numpy as np
 import xgboost as xgb
 from sklearn.model_selection import RandomizedSearchCV
 from sklearn.pipeline import Pipeline
-from sklearn import metrics
 from src import config, evaluation, plotting
 
 warnings.filterwarnings("ignore")
@@ -66,8 +65,7 @@ def evaluate(X_test, y_test, gbm_cv, gbm_best_pipe):
         y_test=y_test, y_pred=gbm_y_pred, y_pred_prob=gbm_y_pred_prob
     )
 
-    cf_matrix = metrics.confusion_matrix(y_test, gbm_y_pred)
-    plotting.plot_confusion_matrix(cf_matrix, "gbm")
+    plotting.plot_confusion_matrix(report["cf_matrix"], "gbm")
     plotting.plot_roc_curve(report["roc"][0], report["roc"][1], "gbm", report["auroc"])
 
     filename = config.MODEL_OUTPUT_PATH / "gbm.pickle"

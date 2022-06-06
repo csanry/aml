@@ -2,7 +2,6 @@ import logging
 import pickle
 import warnings
 
-from sklearn import metrics
 from sklearn.decomposition import PCA
 from sklearn.model_selection import RandomizedSearchCV
 from sklearn.pipeline import Pipeline
@@ -63,8 +62,7 @@ def evaluate(X_test, y_test, svm_cv, svm_best_pipe):
         y_test=y_test, y_pred=svm_y_pred, y_pred_prob=svm_y_pred_prob
     )
 
-    cf_matrix = metrics.confusion_matrix(y_test, svm_y_pred)
-    plotting.plot_confusion_matrix(cf_matrix, "svm")
+    plotting.plot_confusion_matrix(report["cf_matrix"], "svm")
     plotting.plot_roc_curve(report["roc"][0], report["roc"][1], "svm", report["auroc"])
 
 

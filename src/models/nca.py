@@ -3,7 +3,6 @@ import pickle
 import warnings
 
 import numpy as np
-from sklearn import metrics
 from sklearn.decomposition import PCA
 from sklearn.model_selection import GridSearchCV
 from sklearn.neighbors import KNeighborsClassifier
@@ -58,8 +57,7 @@ def evaluate(X_test, y_test, knn_cv, knn_best_pipe):
         y_test=y_test, y_pred=knn_y_pred, y_pred_prob=knn_y_pred_prob
     )
 
-    cf_matrix = metrics.confusion_matrix(y_test, knn_y_pred)
-    plotting.plot_confusion_matrix(cf_matrix, "knn")
+    plotting.plot_confusion_matrix(report["cf_matrix"], "knn")
     plotting.plot_roc_curve(report["roc"][0], report["roc"][1], "knn", report["auroc"])
 
 

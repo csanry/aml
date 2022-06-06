@@ -5,7 +5,7 @@ from typing import Type, Union
 import numpy as np
 import pandas as pd
 from sklearn.metrics import (accuracy_score, f1_score, fbeta_score,
-                             precision_score, recall_score, roc_auc_score, roc_curve)
+                             precision_score, recall_score, roc_auc_score, roc_curve, confusion_matrix)
 from sklearn.model_selection import GridSearchCV, RandomizedSearchCV
 
 
@@ -37,6 +37,7 @@ def evaluate_report(
     report["recall"] = recall_score(y_test, y_pred)
     report["f1"] = f1_score(y_test, y_pred)
     report["f2"] = fbeta_score(y_test, y_pred, beta=2)
+    report["cf_matrix"] = confusion_matrix(y_test, y_pred)
     report["auroc"] = roc_auc_score(y_test, y_pred_prob)
     report["roc"] = roc_curve(y_test, y_pred_prob)
     
