@@ -5,7 +5,7 @@ from typing import Type, Union
 import numpy as np
 import pandas as pd
 from sklearn.metrics import (accuracy_score, f1_score, fbeta_score,
-                             precision_score, recall_score, roc_auc_score)
+                             precision_score, recall_score, roc_auc_score, roc_curve)
 from sklearn.model_selection import GridSearchCV, RandomizedSearchCV
 
 
@@ -30,21 +30,30 @@ def evaluate_tuning(tuner: Union[Type[RandomizedSearchCV], Type[GridSearchCV]]) 
 
 def evaluate_report(
     y_test: pd.Series, y_pred: np.ndarray, y_pred_prob: np.ndarray
-) -> None:
+) -> dict:
+    report = {}
+    report["accuracy"] = accuracy_score(y_test, y_pred)
+    report["precision"] = precision_score(y_test, y_pred)
+    report["recall"] = recall_score(y_test, y_pred)
+    report["f1"] = f1_score(y_test, y_pred)
+    report["f2"] = fbeta_score(y_test, y_pred, beta=2)
+    report["auroc"] = roc_auc_score(y_test, y_pred_prob)
+    report["roc"] = roc_curve(y_test, y_pred_prob)
+    
     print(
         f"""
     -----------
     PERFORMANCE 
     -----------
-    ACCURACY: {accuracy_score(y_test, y_pred):.2%}
-    PRECISION: {precision_score(y_test, y_pred):.2%}
-    RECALL: {recall_score(y_test, y_pred):.2%}
-    F1: {f1_score(y_test, y_pred):.2%}
-    F2: {fbeta_score(y_test, y_pred, beta=2):.2%}
-    ROC AUC: {roc_auc_score(y_test, y_pred_prob):.2%}
+    ACCURACY: {report["accuracy"]:.2%}
+    PRECISION: {report["precision"]:.2%}
+    RECALL: {report["recall"]:.2%}
+    F1: {report["f1"]:.2%}
+    F2: {report["f2"]:.2%}
+    ROC AUC: {report["auroc"]:.2%}
     """
     )
-
+    return report
 
 def main() -> None:
     pass

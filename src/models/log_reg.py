@@ -60,12 +60,14 @@ def evaluate(X_test, y_test, log_reg_cv, log_reg_best_pipe):
 
     evaluation.evaluate_tuning(tuner=log_reg_cv)
 
-    evaluation.evaluate_report(
+    report = evaluation.evaluate_report(
         y_test=y_test, y_pred=log_reg_y_pred, y_pred_prob=log_reg_y_pred_prob
     )
 
     cf_matrix = metrics.confusion_matrix(y_test, log_reg_y_pred)
     plotting.plot_confusion_matrix(cf_matrix, "log_reg")
+    plotting.plot_roc_curve(report["roc"][0], report["roc"][1], "log_reg", report["auroc"])
+
 
     filename = config.MODEL_OUTPUT_PATH / "log_reg.pickle"
     with open(filename, "wb") as file:

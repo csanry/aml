@@ -54,12 +54,15 @@ def evaluate(X_test, y_test, knn_cv, knn_best_pipe):
     knn_y_pred_prob = knn_best_pipe.predict_proba(X_test)[:, 1]
     knn_y_pred = knn_best_pipe.predict(X_test)
 
-    evaluation.evaluate_report(
+    report = evaluation.evaluate_report(
         y_test=y_test, y_pred=knn_y_pred, y_pred_prob=knn_y_pred_prob
     )
 
     cf_matrix = metrics.confusion_matrix(y_test, knn_y_pred)
     plotting.plot_confusion_matrix(cf_matrix, "knn")
+    plotting.plot_roc_curve(report["roc"][0], report["roc"][1], "knn", report["auroc"])
+
+
 
     filename = config.MODEL_OUTPUT_PATH / "knn.pickle"
     with open(filename, "wb") as file:

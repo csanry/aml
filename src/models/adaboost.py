@@ -18,7 +18,7 @@ def train(X_train, y_train, scorer, cv_split):
 
     # Setup the hyperparameter grid
     adaboost_param_grid = {
-        "n_estimators": np.arange(50, 300, 25),
+        "adaboost__n_estimators": np.arange(50, 300, 25),
     }
 
     # build the pipeline
@@ -48,15 +48,15 @@ def evaluate(X_test, y_test, adaboost_cv, adaboost_best_pipe):
     adaboost_y_pred_prob = adaboost_best_pipe.predict_proba(X_test)[:, 1]
     adaboost_y_pred = adaboost_best_pipe.predict(X_test)
 
-    evaluation.evaluate_report(
+    report = evaluation.evaluate_report(
         y_test=y_test, y_pred=adaboost_y_pred, y_pred_prob=adaboost_y_pred_prob
     )
 
     cf_matrix = metrics.confusion_matrix(y_test, adaboost_y_pred)
     plotting.plot_confusion_matrix(cf_matrix, "adaboost")
 
+    plotting.plot_roc_curve(report["roc"][0], report["roc"][1], "adaboost", report["auroc"])
 
     filename = config.MODEL_OUTPUT_PATH / "adaboost.pickle"
     with open(filename, "wb") as file:
         pickle.dump(adaboost_best_pipe, file)
-

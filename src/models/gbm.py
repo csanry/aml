@@ -62,12 +62,13 @@ def evaluate(X_test, y_test, gbm_cv, gbm_best_pipe):
 
     evaluation.evaluate_tuning(tuner=gbm_cv)
 
-    evaluation.evaluate_report(
+    report = evaluation.evaluate_report(
         y_test=y_test, y_pred=gbm_y_pred, y_pred_prob=gbm_y_pred_prob
     )
 
     cf_matrix = metrics.confusion_matrix(y_test, gbm_y_pred)
     plotting.plot_confusion_matrix(cf_matrix, "gbm")
+    plotting.plot_roc_curve(report["roc"][0], report["roc"][1], "gbm", report["auroc"])
 
     filename = config.MODEL_OUTPUT_PATH / "gbm.pickle"
     with open(filename, "wb") as file:

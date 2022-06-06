@@ -65,12 +65,14 @@ def evaluate(X_test, y_test, rf_cv, rf_best_pipe):
     rf_y_pred_prob = rf_best_pipe.predict_proba(X_test)[:, 1]
     rf_y_pred = rf_best_pipe.predict(X_test)
 
-    evaluation.evaluate_report(
+    report = evaluation.evaluate_report(
         y_test=y_test, y_pred=rf_y_pred, y_pred_prob=rf_y_pred_prob
     )
 
     cf_matrix = metrics.confusion_matrix(y_test, rf_y_pred)
     plotting.plot_confusion_matrix(cf_matrix, "rf")
+    plotting.plot_roc_curve(report["roc"][0], report["roc"][1], "rf", report["auroc"])
+
 
     filename = config.MODEL_OUTPUT_PATH / "rf.pickle"
     with open(filename, "wb") as file:
