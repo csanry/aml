@@ -37,7 +37,7 @@ def evaluate_report(
     report["recall"] = recall_score(y_test, y_pred)
     report["f1"] = f1_score(y_test, y_pred)
     report["f2"] = fbeta_score(y_test, y_pred, beta=2)
-    report["cf_matrix"] = confusion_matrix(y_test, y_pred)
+    report["cf_matrix"] = confusion_matrix(y_test, y_pred, normalize="all")
     report["auroc"] = roc_auc_score(y_test, y_pred_prob)
     report["roc"] = roc_curve(y_test, y_pred_prob)
     
