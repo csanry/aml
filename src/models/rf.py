@@ -68,6 +68,7 @@ def evaluate(X_test, y_test, rf_cv, rf_best_pipe):
         y_test=y_test, y_pred=rf_y_pred, y_pred_prob=rf_y_pred_prob
     )
 
+    plotting.plot_confusion_matrix(report["cf_matrix"], "rf")
     plotting.plot_roc_curve(report["roc"][0], report["roc"][1], "rf", report["auroc"])
 
 

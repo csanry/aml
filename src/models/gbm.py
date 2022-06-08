@@ -65,6 +65,7 @@ def evaluate(X_test, y_test, gbm_cv, gbm_best_pipe):
         y_test=y_test, y_pred=gbm_y_pred, y_pred_prob=gbm_y_pred_prob
     )
 
+    plotting.plot_confusion_matrix(report["cf_matrix"], "gbm")
     plotting.plot_roc_curve(report["roc"][0], report["roc"][1], "gbm", report["auroc"])
 
     filename = config.MODEL_OUTPUT_PATH / "gbm.pickle"

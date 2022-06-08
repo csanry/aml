@@ -62,6 +62,7 @@ def evaluate(X_test, y_test, svm_cv, svm_best_pipe):
         y_test=y_test, y_pred=svm_y_pred, y_pred_prob=svm_y_pred_prob
     )
 
+    plotting.plot_confusion_matrix(report["cf_matrix"], "svm")
     plotting.plot_roc_curve(report["roc"][0], report["roc"][1], "svm", report["auroc"])
 
 

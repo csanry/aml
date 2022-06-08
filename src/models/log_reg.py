@@ -1,6 +1,5 @@
 import pickle
 import warnings
-
 from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import GridSearchCV
 from sklearn.pipeline import Pipeline
@@ -64,6 +63,7 @@ def evaluate(X_test, y_test, log_reg_cv, log_reg_best_pipe):
         y_test=y_test, y_pred=log_reg_y_pred, y_pred_prob=log_reg_y_pred_prob
     )
 
+    plotting.plot_confusion_matrix(report["cf_matrix"], "log_reg")
     plotting.plot_roc_curve(report["roc"][0], report["roc"][1], "log_reg", report["auroc"])
 
 

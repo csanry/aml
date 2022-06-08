@@ -57,6 +57,7 @@ def evaluate(X_test, y_test, knn_cv, knn_best_pipe):
         y_test=y_test, y_pred=knn_y_pred, y_pred_prob=knn_y_pred_prob
     )
 
+    plotting.plot_confusion_matrix(report["cf_matrix"], "knn")
     plotting.plot_roc_curve(report["roc"][0], report["roc"][1], "knn", report["auroc"])
 
 
