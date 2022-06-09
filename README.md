@@ -2,10 +2,9 @@ README
 ==============================
 
 1. [Project Organization](#1)
-2. [Downloading and using](#2)
-3. [Using a docker image](#3)
-4. [Development workflow](#4)
-5. [Submitting a pull request](#5)
+2. [Setting Up Environment](#2)
+3. [Using a Docker Image](#3)
+4. [Pipeline Workflow](#4)
 
 
 Project Organization <a name="1"></a>
@@ -15,7 +14,7 @@ Project Organization <a name="1"></a>
     ├── Dockerfile
     ├── docker-compose.yml <- Docker files to set up a containerized environment
     ├── Makefile           <- Makefile with commands like `make data` or `make train`
-    ├── README.md          <- The top-level README for developers using this project.
+    ├── README.md          <- The top-level README for users of this project.
     ├── data
     │   ├── interim        <- Intermediate data that has been transformed.
     │   ├── final          <- The final, canonical data sets for modeling.
@@ -60,7 +59,7 @@ Project Organization <a name="1"></a>
 ---
 
 
-Downloading and using <a name="2"></a>
+Setting Up Environment <a name="2"></a>
 ------------
 
 First, run the following terminal commands 
@@ -72,25 +71,18 @@ $ cd aml
 
 Download and install [anaconda](https://www.anaconda.com/products/distribution)  
 
-Then run the following to create the ML environment (requires linux distro)
+Then run the following to set up the conda environment and run the pipeline (requires linux distro - see steps below to 
+setup docker image)
 
 ```
-$ make create_environment
+$ bash run_pipeline
 ```
 
-Check that the environment is correctly set up
+You can check that the environment is correctly set up using the following command
 
 ```
 $ make test_environment
 ```
-
-Setup can also be done from the `environment.yml` file 
-
-```
-$ conda env create -f environment.yml
-```
-
----
 
 
 Using a docker image <a name="3"></a>
@@ -109,41 +101,28 @@ Run `docker-compose down` after you are done with your work
 ---
 
 
-Development workflow <a name="4"></a>
+Pipeline Workflow <a name="4"></a>
 ------------
 
-We will utilise the [github flow](https://githubflow.github.io/) philosophy where:
+On running run_pipeline.sh, the following steps take place
 
-* Features should be developed on branches
+* MAKING DATASET FROM RAW DATA: Checks if the dataset already exists locally, and if it does not, downloads it from cloud
 
-* Whenever you think that the branch is ready for merging, open a [pull request](https://www.freecodecamp.org/news/how-to-make-your-first-pull-request-on-github-3/) 
+* READING FROM THE LOCAL COPY: Reads the data downloaded locally in the previous step 
 
-* Why? Ensures that main branch is as clean and deployable as possible, no conflicts due to competing branches
+* INTERIM FILE PLACED IN INTERIM AND READY FOR FEATURE ENGINEERING: Data has been read and preprocessed and is ready for feature engineering
 
-* For more information, refer to this [article](https://githubflow.github.io/)
+* FEATURE ENGINEERING: Feature engineering begins. Unwanted columns are dropped.
 
-Submitting a pull request example <a name="5"></a>
-------------
+* BINNING NUMERICAL DATA: Numerical columns are assigned to categorical bins
 
-```bash
-# checkout a branch
-$ git checkout -b cs --track origin/main
+* VECTORIZING CATEGORICAL DATA: Converting categorical variables to indicator variables
 
-# add and commit changes to the branch
-$ git add .
-$ git commit -m "message" -m "more detail on changes made" 
+* IMPUTING MISSING DATA: Filling-in missing data using KNN Imputer
 
-# push changes
-$ git push origin cs
-```
+* TRAINING: Training models AdaBoost, GradientBoosting, Logistic Regression, RandomForestClassifier, KNeighborsClassifier and SupportVectorMachines. Each model is cross-validated using GridSearchCV and RandomizedSearchCV.
 
-* Head to the main [repo](https://github.com/csanry/aml), find your branch, and click on "new pull request" 
+* EVALUATE: Evaluating each model post training. Performance evaluation metrics include: Accuracy, Precision, Recall, F1 Score, F2 Score, AUC and ROC curves. Best Model is that model that creates the right balance between low complexity and high sensitivity. 
 
-* Enter a __descriptive__ title and description for your pull request
 
-* Click on reviewers on the right side and request a review from `csanry`
-
-* Select `create pull request` 
-
-* For a visual explanation refer to [this document](/pr.pdf)
 
