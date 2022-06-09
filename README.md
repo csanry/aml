@@ -75,7 +75,7 @@ Then run the following to set up the conda environment and run the pipeline (req
 setup docker image)
 
 ```
-$ bash run_pipeline
+$ bash run_pipeline.sh
 ```
 
 You can check that the environment is correctly set up using the following command
@@ -103,7 +103,14 @@ Run `docker-compose down` after you are done with your work
 
 Pipeline Workflow <a name="4"></a>
 ------------
-
+```mermaid
+graph TD;
+    run_pipeline.sh-->|environment creation| aml;
+    aml-->|data| make_dataset.py;
+    make_dataset.py-->|features| build_features.py;
+    build_features.py-->|models| train_model.py;
+```
+    
 On running run_pipeline.sh, the following steps take place
 
 * MAKING DATASET FROM RAW DATA: Checks if the dataset already exists locally, and if it does not, downloads it from cloud
