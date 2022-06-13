@@ -1,21 +1,66 @@
-README
+CS610 - Applied Machine Learning - Loan Defaults
 ==============================
 
-1. [Project Organization](#1)
-2. [Downloading and using](#2)
-3. [Using a docker image](#3)
-4. [Development workflow](#4)
-5. [Submitting a pull request](#5)
-
-
-Project Organization <a name="1"></a>
+Table of Contents
 ------------
+
+| S/NO | Section |
+| --- | --- |
+| 1. | [About this Project](#1) | 
+| 2. | [Workflow](#2) | 
+| 3. | [Project Organization](#3) | 
+| 4. | [Setup Environment](#4) | 
+| 5. | [Teardown Environment](#5) | 
+| 6. | [Development Workflow](#6) | 
+| 7. | [Pull Requests](#7) | 
+
+
+About this Project <a name="1"></a>
+------------
+
+In this project, we explore several options to serve fast, reliable predictions on the probability of loan default. Ideally, the best performing solution can be used to automate internal decision-making or credit scoring processes. 
+
+As loans are one of the most important products and revenue streams for banks, it is critical for banks to minimise the number of bad loans within its portfolio. In some extreme cases, the federal government might be forced to step in and bail out a failing bank by using taxpayer’s money. Therefore, it is important for banks to develop machine learning solutions that can better predict bad loans based on the profile of the customer and the nature of the loan.
+
+
+Workflow <a name="2"></a>
+------------
+
+The project contains two main pipelines
+
+### Train Pipeline
+```mermaid
+graph LR;    
+   make_dataset --> build_features --> train_models --> evaluate_models
+```
+
+### Predict Pipeline
+```mermaid
+graph LR;    
+   make_dataset --> build_features --> predict_models --> visualise_predictions
+```
+
+
+| Components | Description |
+| --- | --- |
+| `make_dataset`  | 1. Checks if the dataset exists in `data/raw`<br>2. Reads the file and performs pre-processing<br>3. Save outputs in `data/interim` for feature engineering  |
+| `build_features` | 1. Prepares train and validation set<br>2. Drops unnecessary columns for training<br>3. Encodes categorical variables<br>4. Bin numerical variables<br>5. Imputing missing data for MAR variables<br>6. Save outputs in `data/final`  |
+| `train_model` | 1. Trains all candidate models<br>2. Tune hyperparameters for each model<br>3. Save model weights in `models` folder |
+| `evaluate_model`| 1. Evaluate models based on pre-defined metrics<br>2. Output charts to `reports/figures` |
+| `predict_model`| 1. Loads pre-trained models from `models`<br>2. Output predictions in a `.csv` format |
+| `visualize_predictions`| 1. Loads predictions from models<br>2. Output visualizations |
+
+Project Organization <a name="3"></a>
+------------
+
+The repository is structured in the following hierarchy
+
 
     ├── LICENSE
     ├── Dockerfile
     ├── docker-compose.yml <- Docker files to set up a containerized environment
     ├── Makefile           <- Makefile with commands like `make data` or `make train`
-    ├── README.md          <- The top-level README for developers using this project.
+    ├── README.md          <- The top-level README for users of this project.
     ├── data
     │   ├── interim        <- Intermediate data that has been transformed.
     │   ├── final          <- The final, canonical data sets for modeling.
@@ -23,12 +68,10 @@ Project Organization <a name="1"></a>
     │
     ├── docs               <- A default Sphinx project; see sphinx-doc.org for details
     │
-    ├── models             <- Trained and serialized models, model predictions, or model summaries
+    ├── models             <- Trained and serialized models
     │
-    ├── notebooks          <- Jupyter notebooks. Naming convention is a number (for ordering),
-    │                         the creator's initials, and a short `-` delimited description, e.g.
-    │                         `1.0-jqp-initial-data-exploration`.
-    │
+    ├── notebooks          <- Jupyter notebooks
+    │                         
     ├── references         <- Data dictionaries, manuals, and all other explanatory materials.
     │
     ├── reports            <- Generated analysis as HTML, PDF, LaTeX, etc.
@@ -54,62 +97,67 @@ Project Organization <a name="1"></a>
     │   │
     │   └── visualization  <- Scripts to create exploratory and results oriented visualizations
     │       └── visualize.py
-    │
+    | 
     └── tox.ini            <- tox file with settings for running tox; see tox.readthedocs.io
 
----
 
 
-Downloading and using <a name="2"></a>
+
+Setting up the environment <a name="4"></a>
 ------------
 
-First, run the following terminal commands 
+### Prerequisties 
+
+* Download and install [anaconda](https://www.anaconda.com/products/distribution) 
+
+* Download [docker](https://www.docker.com/products/docker-desktop/) 
+
+* Download [git](https://git-scm.com/downloads) 
+
+
+Run the following terminal commands 
 
 ```
 $ git clone https://github.com/csanry/aml.git
 $ cd aml
 ```
 
-Download and install [anaconda](https://www.anaconda.com/products/distribution)  
 
-Then run the following to create the ML environment (requires linux distro)
+Ensure that you are logged into docker hub. Then run the following command to set up the docker environment 
 
 ```
-$ make create_environment
+$ docker-compose up
+```
+ 
+The command launches an Ubuntu-based distro, and a Jupyter Lab environment for running the pipelines. Launch the Lab environment from the terminal by clicking on the generated URL
+
+In the environment, run the following commands in an open terminal 
+
+```
+$ cd project
+$ bash run_pipeline.sh
 ```
 
-Check that the environment is correctly set up
+Check that the environment is correctly set up using the following command
 
 ```
 $ make test_environment
 ```
 
-Setup can also be done from the `environment.yml` file 
 
-```
-$ conda env create -f environment.yml
-```
-
----
-
-
-Using a docker image <a name="3"></a>
+Tearing down the environment <a name="5"></a>
 ------------
 
-Download [docker](https://www.docker.com/products/docker-desktop/) and run the command 
+Close the browser by double tapping ctrl + c on the terminal
+
+Run the following command on the terminal to tear down the environment 
 
 ```
-$ docker-compose up
+docker-compose down
 ```
 
-A docker container is created which the ubuntu linux distro and launches a Jupyter Lab environment for data science workflows
 
-Run `docker-compose down` after you are done with your work
-
----
-
-
-Development workflow <a name="4"></a>
+Development workflow <a name="6"></a>
 ------------
 
 We will utilise the [github flow](https://githubflow.github.io/) philosophy where:
@@ -122,7 +170,7 @@ We will utilise the [github flow](https://githubflow.github.io/) philosophy wher
 
 * For more information, refer to this [article](https://githubflow.github.io/)
 
-Submitting a pull request example <a name="5"></a>
+Submitting a pull request example <a name="7"></a>
 ------------
 
 ```bash
@@ -146,4 +194,7 @@ $ git push origin cs
 * Select `create pull request` 
 
 * For a visual explanation refer to [this document](/pr.pdf)
+
+
+
 
