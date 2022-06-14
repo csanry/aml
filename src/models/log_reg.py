@@ -1,5 +1,6 @@
 import pickle
 import warnings
+
 from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import GridSearchCV
 from sklearn.pipeline import Pipeline
@@ -38,7 +39,7 @@ def train(X_train, y_train, scorer, cv_split):
         estimator=log_reg_pipe,
         param_grid=log_reg_param_grid,
         scoring=scorer,
-        refit=scorer["F_score"],
+        refit="F_score",
         cv=cv_split,
         return_train_score=True,
         n_jobs=config.N_JOBS,
@@ -63,10 +64,15 @@ def evaluate(X_test, y_test, log_reg_cv, log_reg_best_pipe, file_name):
         y_test=y_test, y_pred=log_reg_y_pred, y_pred_prob=log_reg_y_pred_prob
     )
 
-    filename = config.MODEL_OUTPUT_PATH / f"{file_name}.pickle"
+    plotting.plot_confusion_matrix(cf_matrix=report["cf_matrix"], model_name=file_name)
+    plotting.plot_roc_curve(
+        fpr=report["roc"][0],
+        tpr=report["roc"][1],
+        model_name=file_name,
+        auc=report["auroc"],
+    )
 
-    plotting.plot_confusion_matrix(report["cf_matrix"], "log_reg")
-    plotting.plot_roc_curve(report["roc"][0], report["roc"][1], "log_reg", report["auroc"])
+    save_path = config.MODEL_OUTPUT_PATH / f"{file_name}.pickle"
 
-    with open(filename, "wb") as file:
+    with open(save_path, "wb") as file:
         pickle.dump(log_reg_best_pipe, file)

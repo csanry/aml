@@ -23,7 +23,7 @@ def train(X_train, y_train, scorer, cv_split):
 
     # baseline model
     svm = SVC(
-        probability=True, max_iter=5000, random_state=config.RANDOM_STATE, verbose=True
+        probability=True, max_iter=3000, random_state=config.RANDOM_STATE, verbose=True
     )
     mm_scale = MinMaxScaler(feature_range=(0, 1))
     pca = PCA(random_state=config.RANDOM_STATE,)
@@ -37,7 +37,7 @@ def train(X_train, y_train, scorer, cv_split):
         param_distributions=svm_param_grid,
         n_iter=15,
         scoring=scorer,
-        refit=scorer["F_score"],
+        refit="F_score",
         cv=cv_split,
         return_train_score=True,
         n_jobs=config.N_JOBS,
@@ -62,13 +62,16 @@ def evaluate(X_test, y_test, svm_cv, svm_best_pipe, file_name):
         y_test=y_test, y_pred=svm_y_pred, y_pred_prob=svm_y_pred_prob
     )
 
+    plotting.plot_confusion_matrix(cf_matrix=report["cf_matrix"], model_name=file_name)
+    plotting.plot_roc_curve(
+        fpr=report["roc"][0],
+        tpr=report["roc"][1],
+        model_name=file_name,
+        auc=report["auroc"],
+    )
 
-    filename = config.MODEL_OUTPUT_PATH / f"{file_name}.pickle"
+    save_path = config.MODEL_OUTPUT_PATH / f"{file_name}.pickle"
 
-    plotting.plot_confusion_matrix(report["cf_matrix"], "svm")
-    plotting.plot_roc_curve(report["roc"][0], report["roc"][1], "svm", report["auroc"])
-
-
-    with open(filename, "wb") as file:
+    with open(save_path, "wb") as file:
         pickle.dump(svm_best_pipe, file)
 

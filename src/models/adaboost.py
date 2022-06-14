@@ -17,7 +17,7 @@ def train(X_train, y_train, scorer, cv_split):
 
     # Setup the hyperparameter grid
     adaboost_param_grid = {
-        "adaboost__n_estimators": np.arange(50, 300, 25),
+        "adaboost__n_estimators": np.arange(200, 300, 25),
     }
 
     # build the pipeline
@@ -28,7 +28,7 @@ def train(X_train, y_train, scorer, cv_split):
         estimator=adaboost_pipe,
         param_grid=adaboost_param_grid,
         scoring=scorer,
-        refit=scorer["F_score"],
+        refit="F_score",
         cv=cv_split,
         return_train_score=True,
         n_jobs=config.N_JOBS,
@@ -51,10 +51,15 @@ def evaluate(X_test, y_test, adaboost_cv, adaboost_best_pipe, file_name):
         y_test=y_test, y_pred=adaboost_y_pred, y_pred_prob=adaboost_y_pred_prob
     )
 
-    plotting.plot_confusion_matrix(report["cf_matrix"], "adaboost")
-    plotting.plot_roc_curve(report["roc"][0], report["roc"][1], "adaboost", report["auroc"])
+    plotting.plot_confusion_matrix(cf_matrix=report["cf_matrix"], model_name=file_name)
+    plotting.plot_roc_curve(
+        fpr=report["roc"][0],
+        tpr=report["roc"][1],
+        model_name=file_name,
+        auc=report["auroc"],
+    )
 
-    filename = config.MODEL_OUTPUT_PATH / f"{file_name}.pickle"
+    save_path = config.MODEL_OUTPUT_PATH / f"{file_name}.pickle"
 
-    with open(filename, "wb") as file:
+    with open(save_path, "wb") as file:
         pickle.dump(adaboost_best_pipe, file)

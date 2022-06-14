@@ -2,11 +2,10 @@ from typing import Any, Dict, Hashable, Iterable, List, Optional, Set, Tuple, Un
 
 import matplotlib as mpl
 import matplotlib.pyplot as plt
+import numpy as np
 import numpy.typing as npt
 import pandas as pd
 import seaborn as sns
-import numpy as np
-import numpy.typing as npt
 
 from src import config
 
@@ -349,27 +348,47 @@ def plot_corr(
     plt.show()
 
 
+def plot_confusion_matrix(cf_matrix: np.ndarray, model_name: str) -> None:
+    _, ax = plt.subplots(figsize=(12, 8))
 
-def plot_confusion_matrix(cf_matrix: npt.NDArray, model_name: str) -> None:
-    fig, ax = plt.subplots(figsize=(12, 8))
+    sns.heatmap(
+        np.eye(2),
+        annot=cf_matrix,
+        fmt="g",
+        annot_kws={"size": 50},
+        cmap=sns.color_palette(["tomato", "palegreen"], as_cmap=True),
+        cbar=False,
+        yticklabels=["No default", "Default"],
+        xticklabels=["No default", "Default"],
+        ax=ax,
+    )
 
-    sns.heatmap(np.eye(2), annot=cf_matrix, fmt='g', annot_kws={'size': 50},
-            cmap=sns.color_palette(['tomato', 'palegreen'], as_cmap=True), cbar=False,
-            yticklabels=['No default', 'Default'], xticklabels=['No default', 'Default'], ax=ax)
-
-    additional_texts = ['(True Negative)', '(False Positive)', '(False Negative)', '(True Positive)']
+    additional_texts = [
+        "(True Negative)",
+        "(False Positive)",
+        "(False Negative)",
+        "(True Positive)",
+    ]
     for text_elt, additional_text in zip(ax.texts, additional_texts):
-        ax.text(*text_elt.get_position(), '\n' + additional_text, color=text_elt.get_color(),
-                ha='center', va='top', size=24)
+        ax.text(
+            *text_elt.get_position(),
+            "\n" + additional_text,
+            color=text_elt.get_color(),
+            ha="center",
+            va="top",
+            size=24,
+        )
 
     ax.set_title(f"{model_name} confusion matrix", size=24, pad=20)
-    ax.set_xlabel('Predicted Values', size=20)
-    ax.set_ylabel('Actual Values', size=20)
+    ax.set_xlabel("Predicted Values", size=20)
+    ax.set_ylabel("Actual Values", size=20)
     plt.savefig(f"{config.REPORTS_PATH}/confusion_matrix/{model_name}.jpeg")
-    plt.show()
+    plt.clf()
 
 
-def plot_roc_curve(fpr: npt.ArrayLike, tpr: npt.ArrayLike, name: str, auc: float) -> None:
+def plot_roc_curve(
+    fpr: npt.ArrayLike, tpr: npt.ArrayLike, model_name: str, auc: float
+) -> None:
     """Plot ROC curve
     """
 
@@ -377,11 +396,16 @@ def plot_roc_curve(fpr: npt.ArrayLike, tpr: npt.ArrayLike, name: str, auc: float
     plt.plot(fpr, tpr, linestyle="solid", color="blue")
     plt.xlabel("FPR")
     plt.ylabel("TPR")
-    plt.title(f"{name} ROC curve")
-    plt.text(0.95, 0.01, f"AUC: {auc:.2%}", verticalalignment="bottom", horizontalalignment="right")
-    plt.savefig(f"{config.REPORTS_PATH}/roc/{name}.jpeg")
-    plt.show()
-
+    plt.title(f"{model_name} ROC curve")
+    plt.text(
+        0.95,
+        0.01,
+        f"AUC: {auc:.2%}",
+        verticalalignment="bottom",
+        horizontalalignment="right",
+    )
+    plt.savefig(f"{config.REPORTS_PATH}/roc/{model_name}.jpeg")
+    plt.clf()
 
 
 def main() -> None:

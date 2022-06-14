@@ -40,7 +40,7 @@ def train(X_train, y_train, scorer, cv_split):
         param_distributions=gbm_param_grid,
         n_iter=30,
         scoring=scorer,
-        refit=scorer["F_score"],
+        refit="F_score",
         cv=cv_split,
         return_train_score=True,
         n_jobs=config.N_JOBS,
@@ -66,10 +66,15 @@ def evaluate(X_test, y_test, gbm_cv, gbm_best_pipe, file_name):
         y_test=y_test, y_pred=gbm_y_pred, y_pred_prob=gbm_y_pred_prob
     )
 
-    filename = config.MODEL_OUTPUT_PATH / f"{file_name}.pickle"
+    plotting.plot_confusion_matrix(cf_matrix=report["cf_matrix"], model_name=file_name)
+    plotting.plot_roc_curve(
+        fpr=report["roc"][0],
+        tpr=report["roc"][1],
+        model_name=file_name,
+        auc=report["auroc"],
+    )
 
-    plotting.plot_confusion_matrix(report["cf_matrix"], "gbm")
-    plotting.plot_roc_curve(report["roc"][0], report["roc"][1], "gbm", report["auroc"])
-    
-    with open(filename, "wb") as file:
+    save_path = config.MODEL_OUTPUT_PATH / f"{file_name}.pickle"
+
+    with open(save_path, "wb") as file:
         pickle.dump(gbm_best_pipe, file)
