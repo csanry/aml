@@ -11,21 +11,48 @@ def train_all():
 
     logger = logging.getLogger()
 
-    scorer = config.SCORER
+    large_scorer, small_scorer = config.LARGE_SCORER, config.SMALL_SCORER
     cv_split = config.CV_SPLIT
 
-    X_train, X_test, y_train, y_test = helpers.read_files()
+    datasets = helpers.read_files()
+
+    (
+        X_large_train,
+        y_large_train,
+        X_large_test,
+        y_large_test,
+        X_small_train,
+        y_small_train,
+        X_small_test,
+        y_small_test,
+    ) = datasets.values()
 
     model_options = [adaboost, gbm, log_reg, rf, nca, svm]
 
-    for model in model_options:
-        logger.info(f"TRAINING {model.__name__}")
-        cv, best_model = model.train(X_train, y_train, scorer, cv_split)
+    for key, data in zip(
+        ["large", "small"],
+        [
+            [X_large_train, y_large_train, X_large_test, y_large_test],
+            [X_small_train, y_small_train, X_small_test, y_small_test],
+        ],
+    ):
+        scorer = large_scorer if key == "large" else small_scorer
 
-        logger.info(f"EVALUATION {model.__name__}")
-        model.evaluate(X_test, y_test, cv, best_model)
+        for model in model_options:
+            logger.info(f"TRAINING {model.__name__}__{key}")
+            cv, best_model = model.train(data[0], data[1], scorer, cv_split)
 
-        logger.info(f"DONE {model.__name__}")
+            logger.info(f"EVALUATION {model.__name__}__{key}")
+            model.evaluate(
+                data[2],
+                data[3],
+                cv,
+                best_model,
+                f"{model.__name__.split('.')[-1]}_{key}",
+            )
+
+            logger.info(f"DONE {model.__name__}__{key}")
 
 
-train_all()
+if __name__ == "__main__":
+    train_all()
