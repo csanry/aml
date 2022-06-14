@@ -42,7 +42,7 @@ def train(X_train, y_train, scorer, cv_split):
         param_distributions=rf_param_grid,
         n_iter=30,
         scoring=scorer,
-        refit="F2",
+        refit=scorer["F_score"],
         cv=cv_split,
         return_train_score=True,
         n_jobs=config.N_JOBS,
@@ -57,7 +57,7 @@ def train(X_train, y_train, scorer, cv_split):
     return rf_cv, rf_best_pipe
 
 
-def evaluate(X_test, y_test, rf_cv, rf_best_pipe):
+def evaluate(X_test, y_test, rf_cv, rf_best_pipe, file_name):
 
     evaluation.evaluate_tuning(tuner=rf_cv)
 
@@ -68,7 +68,7 @@ def evaluate(X_test, y_test, rf_cv, rf_best_pipe):
         y_test=y_test, y_pred=rf_y_pred, y_pred_prob=rf_y_pred_prob
     )
 
-    filename = config.MODEL_OUTPUT_PATH / "rf.pickle"
+    filename = config.MODEL_OUTPUT_PATH / f"{file_name}.pickle"
     with open(filename, "wb") as file:
         pickle.dump(rf_best_pipe, file)
 

@@ -39,7 +39,7 @@ def train(X_train, y_train, scorer, cv_split):
         estimator=log_reg_pipe,
         param_grid=log_reg_param_grid,
         scoring=scorer,
-        refit="F2",
+        refit=scorer["F_score"],
         cv=cv_split,
         return_train_score=True,
         n_jobs=config.N_JOBS,
@@ -53,7 +53,7 @@ def train(X_train, y_train, scorer, cv_split):
     return log_reg_cv, log_reg_best_pipe
 
 
-def evaluate(X_test, y_test, log_reg_cv, log_reg_best_pipe):
+def evaluate(X_test, y_test, log_reg_cv, log_reg_best_pipe, file_name):
 
     log_reg_y_pred_prob = log_reg_best_pipe.predict_proba(X_test)[:, 1]
     log_reg_y_pred = log_reg_best_pipe.predict(X_test)
@@ -64,6 +64,6 @@ def evaluate(X_test, y_test, log_reg_cv, log_reg_best_pipe):
         y_test=y_test, y_pred=log_reg_y_pred, y_pred_prob=log_reg_y_pred_prob
     )
 
-    filename = config.MODEL_OUTPUT_PATH / "log_reg.pickle"
+    filename = config.MODEL_OUTPUT_PATH / f"{file_name}.pickle"
     with open(filename, "wb") as file:
         pickle.dump(log_reg_best_pipe, file)

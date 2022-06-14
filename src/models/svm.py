@@ -37,7 +37,7 @@ def train(X_train, y_train, scorer, cv_split):
         param_distributions=svm_param_grid,
         n_iter=15,
         scoring=scorer,
-        refit="F2",
+        refit=scorer["F_score"],
         cv=cv_split,
         return_train_score=True,
         n_jobs=config.N_JOBS,
@@ -52,7 +52,7 @@ def train(X_train, y_train, scorer, cv_split):
     return svm_cv, svm_best_pipe
 
 
-def evaluate(X_test, y_test, svm_cv, svm_best_pipe):
+def evaluate(X_test, y_test, svm_cv, svm_best_pipe, file_name):
 
     evaluation.evaluate_tuning(tuner=svm_cv)
     svm_y_pred_prob = svm_best_pipe.predict_proba(X_test)[:, 1]
@@ -62,7 +62,7 @@ def evaluate(X_test, y_test, svm_cv, svm_best_pipe):
         y_test=y_test, y_pred=svm_y_pred, y_pred_prob=svm_y_pred_prob
     )
 
-    filename = config.MODEL_OUTPUT_PATH / "svm.pickle"
+    filename = config.MODEL_OUTPUT_PATH / f"{file_name}.pickle"
     with open(filename, "wb") as file:
         pickle.dump(svm_best_pipe, file)
 
