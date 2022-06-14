@@ -33,7 +33,7 @@ def train(X_train, y_train, scorer, cv_split):
         estimator=knn_pipe,
         param_grid=knn_param_grid,
         scoring=scorer,
-        refit="F2",
+        refit=scorer["F_score"],
         cv=cv_split,
         return_train_score=True,
         n_jobs=config.N_JOBS,
@@ -47,7 +47,7 @@ def train(X_train, y_train, scorer, cv_split):
     return knn_cv, knn_best_pipe
 
 
-def evaluate(X_test, y_test, knn_cv, knn_best_pipe):
+def evaluate(X_test, y_test, knn_cv, knn_best_pipe, file_name):
 
     evaluation.evaluate_tuning(tuner=knn_cv)
     knn_y_pred_prob = knn_best_pipe.predict_proba(X_test)[:, 1]
@@ -57,12 +57,13 @@ def evaluate(X_test, y_test, knn_cv, knn_best_pipe):
         y_test=y_test, y_pred=knn_y_pred, y_pred_prob=knn_y_pred_prob
     )
 
+
+    filename = config.MODEL_OUTPUT_PATH / f"{file_name}.pickle"
+
     plotting.plot_confusion_matrix(report["cf_matrix"], "knn")
     plotting.plot_roc_curve(report["roc"][0], report["roc"][1], "knn", report["auroc"])
 
 
-
-    filename = config.MODEL_OUTPUT_PATH / "knn.pickle"
     with open(filename, "wb") as file:
         pickle.dump(knn_best_pipe, file)
 

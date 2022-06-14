@@ -3,15 +3,14 @@ import os
 import pickle
 import sys
 from ast import Index
-from typing import (Any, Dict, Hashable, Iterable, List, Optional, Set, Tuple,
-                    Union)
+from collections import OrderedDict
+from typing import Any, Dict, Hashable, Iterable, List, Optional, Set, Tuple, Union
 
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 import missingno as msno
 import pandas as pd
 import pandas.api.types as types
-import seaborn as sns
 
 from src import config
 
@@ -91,11 +90,31 @@ def bin_values(df: pd.DataFrame, col: str) -> pd.Series:
 
 
 def read_files():
-    train = pd.read_parquet(config.FIN_FILE_PATH / "train.parquet")
-    test = pd.read_parquet(config.FIN_FILE_PATH / "test.parquet")
-    X_train, y_train = train.drop(columns=config.TARGET), train[config.TARGET]
-    X_test, y_test = test.drop(columns=config.TARGET), test[config.TARGET]
-    return (X_train, X_test, y_train, y_test)
+    """Read in files for training
+
+    Parameters
+    ----------
+    None
+
+    Returns
+    -------
+    train and test file types for large and small loans 
+    
+    """
+    large_train = pd.read_parquet(config.FIN_FILE_PATH / "df_large_train.parquet")
+    small_train = pd.read_parquet(config.FIN_FILE_PATH / "df_small_train.parquet")
+    large_test = pd.read_parquet(config.FIN_FILE_PATH / "df_large_test.parquet")
+    small_test = pd.read_parquet(config.FIN_FILE_PATH / "df_small_test.parquet")
+
+    datasets = OrderedDict()
+    for data, name in zip(
+        [large_train, large_test, small_train, small_test],
+        ["large_train", "large_test", "small_train", "small_test"],
+    ):
+        datasets[f"X_{name}"] = data.drop(columns=config.TARGET)
+        datasets[f"y_{name}"] = data[config.TARGET]
+
+    return datasets
 
 
 def convert_to_dtype(col: pd.Series, type: str = "categorical") -> pd.Series:
@@ -163,7 +182,7 @@ def return_value_counts(df: pd.DataFrame) -> None:
         print(
             f"""
         {col.upper()}
-        ####################################
+        ------------------------
         {df[col].value_counts()}
 
         """
@@ -222,7 +241,7 @@ def missingness_checks(df: pd.DataFrame) -> None:
     {df.isna().sum()}
 
     MISSINGNESS THROUGHOUT THE DATA
-    ####################################
+    -------------------------------
     """
     )
     msno.matrix(df)

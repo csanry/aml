@@ -28,7 +28,7 @@ def train(X_train, y_train, scorer, cv_split):
         estimator=adaboost_pipe,
         param_grid=adaboost_param_grid,
         scoring=scorer,
-        refit="F2",
+        refit=scorer["F_score"],
         cv=cv_split,
         return_train_score=True,
         n_jobs=config.N_JOBS,
@@ -42,7 +42,7 @@ def train(X_train, y_train, scorer, cv_split):
     return adaboost_cv, adaboost_best_pipe
 
 
-def evaluate(X_test, y_test, adaboost_cv, adaboost_best_pipe):
+def evaluate(X_test, y_test, adaboost_cv, adaboost_best_pipe, file_name):
     evaluation.evaluate_tuning(tuner=adaboost_cv)
     adaboost_y_pred_prob = adaboost_best_pipe.predict_proba(X_test)[:, 1]
     adaboost_y_pred = adaboost_best_pipe.predict(X_test)
@@ -54,6 +54,7 @@ def evaluate(X_test, y_test, adaboost_cv, adaboost_best_pipe):
     plotting.plot_confusion_matrix(report["cf_matrix"], "adaboost")
     plotting.plot_roc_curve(report["roc"][0], report["roc"][1], "adaboost", report["auroc"])
 
-    filename = config.MODEL_OUTPUT_PATH / "adaboost.pickle"
+    filename = config.MODEL_OUTPUT_PATH / f"{file_name}.pickle"
+
     with open(filename, "wb") as file:
         pickle.dump(adaboost_best_pipe, file)

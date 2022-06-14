@@ -41,7 +41,8 @@ RANDOM_STATE = 123
 N_JOBS = -1
 N_SPLITS = 5
 TARGET = "status"
-SCORER = {"AUC": "roc_auc", "F2": make_scorer(fbeta_score, beta=2)}
+SMALL_SCORER = {"AUC": "roc_auc", "F_score": make_scorer(fbeta_score, beta=0.5)}
+LARGE_SCORER = {"AUC": "roc_auc", "F_score": make_scorer(fbeta_score, beta=2)}
 CV_SPLIT = ShuffleSplit(
     n_splits=5, test_size=0.2, train_size=0.8, random_state=RANDOM_STATE
 )
