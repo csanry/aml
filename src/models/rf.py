@@ -5,7 +5,7 @@ import numpy as np
 import xgboost as xgb
 from sklearn.model_selection import RandomizedSearchCV
 from sklearn.pipeline import Pipeline
-from src import config, evaluation
+from src import config, evaluation, plotting
 
 warnings.filterwarnings("ignore")
 
@@ -64,11 +64,17 @@ def evaluate(X_test, y_test, rf_cv, rf_best_pipe, file_name):
     rf_y_pred_prob = rf_best_pipe.predict_proba(X_test)[:, 1]
     rf_y_pred = rf_best_pipe.predict(X_test)
 
-    evaluation.evaluate_report(
+    report = evaluation.evaluate_report(
         y_test=y_test, y_pred=rf_y_pred, y_pred_prob=rf_y_pred_prob
     )
 
+
     filename = config.MODEL_OUTPUT_PATH / f"{file_name}.pickle"
+
+    plotting.plot_confusion_matrix(report["cf_matrix"], "rf")
+    plotting.plot_roc_curve(report["roc"][0], report["roc"][1], "rf", report["auroc"])
+
+    
     with open(filename, "wb") as file:
         pickle.dump(rf_best_pipe, file)
 
