@@ -27,7 +27,14 @@ def train_all():
         y_small_test,
     ) = datasets.values()
 
-    model_options = [adaboost, gbm, log_reg, rf, nca, svm]
+    model_options = [
+        adaboost,
+        gbm,
+        log_reg,
+        rf,
+        nca,
+        svm,
+    ]
 
     for key, data in zip(
         ["large", "small"],
