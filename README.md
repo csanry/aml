@@ -134,7 +134,7 @@ The command launches an Ubuntu-based distro, and a Jupyter Lab environment for r
 In the environment, run the following commands in an open terminal 
 
 ```
-$ cd project
+$ cd src
 $ bash run_pipeline.sh
 ```
 
