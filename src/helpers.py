@@ -89,7 +89,7 @@ def bin_values(df: pd.DataFrame, col: str) -> pd.Series:
     return column_binned
 
 
-def read_files():
+def read_files() -> Dict:
     """Read in files for training
 
     Parameters
@@ -115,6 +115,34 @@ def read_files():
         datasets[f"y_{name}"] = data[config.TARGET]
 
     return datasets
+
+
+def read_pred_files():
+    """
+    Read in files for predictions
+
+    Parameters
+    ----------
+    None
+
+    Returns
+    -------
+    Large and small loans to predict 
+    """
+    large_loans = pd.read_parquet(config.FIN_FILE_PATH / "df_large_test.parquet")
+    small_loans = pd.read_parquet(config.FIN_FILE_PATH / "df_small_test.parquet")
+
+    large_loans_pred = large_loans.drop(columns=config.TARGET)
+    small_loans_pred = small_loans.drop(columns=config.TARGET)
+
+    large_loans_pred = large_loans_pred.sample(
+        n=10000, random_state=config.RANDOM_STATE
+    )
+    small_loans_pred = small_loans_pred.sample(
+        n=10000, random_state=config.RANDOM_STATE
+    )
+
+    return large_loans_pred, small_loans_pred
 
 
 def convert_to_dtype(col: pd.Series, type: str = "categorical") -> pd.Series:
