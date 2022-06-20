@@ -15,5 +15,5 @@ models = {
     "ada_small": load_model(base_path / "adaboost_small.pickle"),
     "ada_large": load_model(base_path / "adaboost_large.pickle"),
     "svm_small": load_model(base_path / "svm_small.pickle"),
-    "svm_large": load_model(base_path / "svmlarge.pickle")
+    "svm_large": load_model(base_path / "svm_large.pickle")
 }
