@@ -92,9 +92,11 @@ The repository is structured in the following hierarchy
     │   │
     │   ├── models         <- Scripts to train models and then use trained models to make
     │   │   │                 predictions
-    │   │   ├── predict_model.py
     │   │   └── train_model.py
-    │   │
+    │   │ 
+    │   ├── predict        <- Script to predict on new, unseen models
+    │   │   └── predict_model.py
+    │   │ 
     │   └── visualization  <- Scripts to create exploratory and results oriented visualizations
     │       └── visualize.py
     | 
@@ -133,17 +135,22 @@ The command launches an Ubuntu-based distro, and a Jupyter Lab environment for r
 
 In the environment, run the following commands in an open terminal 
 
-```
-$ cd src
-$ bash run_pipeline.sh
+```bash
+cd src
+bash run_train_pipeline.sh
 ```
 
 Check that the environment is correctly set up using the following command
 
-```
-$ make test_environment
+```bash
+make test_environment
 ```
 
+Run the predict pipeline using 
+
+```bash 
+bash run_predict_pipeline.sh
+```
 
 Tearing down the environment <a name="5"></a>
 ------------
