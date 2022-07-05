@@ -2,35 +2,30 @@ import logging
 import os
 import warnings
 import pandas as pd
-from sklearn.model_selection import train_test_split
-from src.features import build_features
+from src.data import make_dataset
 from src import config
 
 warnings.filterwarnings("ignore")
 
 
-def main(test_size: float = 0.2):
+def main(threshold: int = 300000):
 
     logger = logging.getLogger()
-    logger.info("TRAIN TEST SPLIT")
+    logger.info(f"LOAN SIZE SPLIT BY THRESHOLD {threshold}")
 
-    if not os.path.exists(
-        config.INT_FILE_PATH / "df_large_engineered.parquet"
-    ) or not os.path.exists(config.INT_FILE_PATH / "df_small_engineered.parquet"):
-        build_features.main()
+    if not os.path.exists(config.INT_FILE_PATH / "df_processed.parquet"):
+        make_dataset.main()
 
-    df_small = pd.read_parquet(config.INT_FILE_PATH / "df_small_engineered.parquet")
-    df_large = pd.read_parquet(config.INT_FILE_PATH / "df_large_engineered.parquet")
+    df = pd.read_parquet(config.INT_FILE_PATH / "df_processed.parquet")
 
-    for name, df in zip(["df_small", "df_large"], [df_small, df_large]):
-        train, test = train_test_split(
-                df, test_size=test_size, random_state=config.RANDOM_STATE
-            )
+    # split into large and small loans
+    df_small = df.loc[df["loan_amount"] < threshold, :]
+    df_large = df.loc[df["loan_amount"] >= threshold, :]
 
-        for df, file_type in zip([train, test], ["train", "test"]):
-            df.to_parquet(config.FIN_FILE_PATH / f"{name}_{file_type}.parquet")
-    
-    logger.info(f"TRAIN TEST SPLIT DONE")
+    df_small.to_parquet(config.INT_FILE_PATH / "df_small_loans.parquet")
+    df_large.to_parquet(config.INT_FILE_PATH / "df_large_loans.parquet")
+
+    logger.info(f"THRESHOLD SPLIT AT {threshold} DONE")
 
 
 if __name__ == "__main__":
@@ -39,19 +34,18 @@ if __name__ == "__main__":
 
     import argparse
 
-    def restricted_float(x):
+    def restricted_int(x):
         try:
-            x = float(x)
+            x = int(x)
         except ValueError:
-            raise argparse.ArgumentTypeError(f"{x} not a floating-point literal")
+            raise argparse.ArgumentTypeError(f"{x} not an integer")
 
-        if x < 0.0 or x > 1.0:
-            raise argparse.ArgumentTypeError(f"{x} not in range [0.0, 1.0]")
+        if x < 0:
+            raise argparse.ArgumentTypeError(f"{x} loan value threshold cannot be negative.")
         return x    
 
     parser = argparse.ArgumentParser()
-    parser.add_argument('--test_size', type=restricted_float, metavar="[0.0, 1.0]", default=0.2, required=False)
+    parser.add_argument('-t', '--threshold', type=restricted_int, default=300000, required=False)
     args = parser.parse_args()
 
-
-    main(args.test_size)
+    main(args.threshold)

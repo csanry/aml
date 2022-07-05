@@ -138,14 +138,9 @@ def main():
     age_cat = pd.CategoricalDtype(categories=age_bins, ordered=True)
     df["age"] = df["age"].astype(age_cat)
 
-    # split into large and small loans
-    df_small = df.loc[df["loan_amount"] < 300_000, :]
-    df_large = df.loc[df["loan_amount"] >= 300_000, :]
+    df.to_parquet(config.INT_FILE_PATH / f"df_processed.parquet")
 
-    df_small.to_parquet(config.INT_FILE_PATH / "df_small_loans.parquet")
-    df_large.to_parquet(config.INT_FILE_PATH / "df_large_loans.parquet")
-
-    logger.info("INTERIM FILE PLACED IN INTERIM AND READY FOR FEATURE ENGINEERING")
+    logger.info("INTERIM FILE PLACED IN INTERIM AND READY FOR THRESHOLD SPLIT")
 
 
 if __name__ == "__main__":

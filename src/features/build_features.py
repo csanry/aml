@@ -7,7 +7,7 @@ import pandas.api.types as types
 from sklearn.impute import KNNImputer
 from sklearn.model_selection import train_test_split
 from src import config, helpers
-from src.data import make_dataset
+from src.data import split_dataset
 
 warnings.filterwarnings("ignore")
 
@@ -24,7 +24,7 @@ def main():
     if not os.path.exists(
         config.INT_FILE_PATH / "df_large_loans.parquet"
     ) or not os.path.exists(config.INT_FILE_PATH / "df_small_loans.parquet"):
-        make_dataset.main()
+        split_dataset.main()
 
     df_small = pd.read_parquet(config.INT_FILE_PATH / "df_small_loans.parquet")
     df_large = pd.read_parquet(config.INT_FILE_PATH / "df_large_loans.parquet")
@@ -101,7 +101,12 @@ def main():
             df_filled = KNNImputer().fit_transform(df_subset)
             df[col] = df_filled[:, -1]
         
-        df.to_parquet(config.INT_FILE_PATH / f"{name}_engineered.parquet")
+        train, test = train_test_split(
+            df, test_size=0.2, random_state=config.RANDOM_STATE
+        )
+
+        for df, file_type in zip([train, test], ["train", "test"]):
+            df.to_parquet(config.FIN_FILE_PATH / f"{name}_{file_type}.parquet")
 
     logger.info(f"DONE EXPORTS")
 
