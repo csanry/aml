@@ -75,7 +75,7 @@ if __name__ == "__main__":
     """ How to use argparse to specify which model(s) to train:
     Enter this command to find out: python3 src/models/train_models.py -h 
     Some examples:
-    python3 src/models/train_models.py == python3 src/models/train_models.py --models adaboost=true gbm=true log_reg=true rf=true nca=true svm=true
+    Running python3 src/models/train_models.py (without argparse) is equivalent to python3 src/models/train_models.py --models adaboost=true gbm=true log_reg=true rf=true nca=true svm=true
     python3 src/models/train_models.py -m aDAbOoST=true GBM=false log_reg=stringOtherThanTrueFalse --> {'adaboost': True, 'gbm': False, 'log_reg': False}
     """
     import argparse
