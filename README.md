@@ -45,7 +45,7 @@ graph LR;
 | --- | --- |
 | `make_dataset`  | 1. Checks if the dataset exists in `data/raw`<br>2. Reads the file and performs pre-processing<br>3. Save outputs in `data/interim` for feature engineering  |
 | `build_features` | 1. Prepares train and validation set<br>2. Drops unnecessary columns for training<br>3. Encodes categorical variables<br>4. Bin numerical variables<br>5. Imputing missing data for MAR variables<br>6. Save outputs in `data/final`  |
-| `train_model` | 1. Trains all candidate models<br>2. Tune hyperparameters for each model<br>3. Save model weights in `models` folder |
+| `train_models` | 1. Trains specified candidate models (or train all models if not specified)<br>2. Tune hyperparameters for each model<br>3. Save model weights in `models` folder |
 | `evaluate_model`| 1. Evaluate models based on pre-defined metrics<br>2. Output charts to `reports/figures` |
 | `predict_model`| 1. Loads pre-trained models from `models`<br>2. Output predictions in a `.csv` format |
 | `visualize_predictions`| 1. Loads predictions from models<br>2. Output visualizations |
@@ -93,7 +93,7 @@ The repository is structured in the following hierarchy
     │   │
     │   ├── models         <- Scripts to train models and then use trained models to make
     │   │   │                 predictions
-    │   │   └── train_model.py
+    │   │   └── train_models.py
     │   │ 
     │   ├── predict        <- Script to predict on new, unseen models
     │   │   └── predict_model.py
