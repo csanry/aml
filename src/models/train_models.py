@@ -1,10 +1,10 @@
 import logging
-
+from typing import Dict
 from src import config, helpers
 from src.models import adaboost, gbm, log_reg, nca, rf, svm
 
 
-def train_all():
+def train(models_to_train: Dict[str, bool]):
 
     log_fmt = "%(asctime)s:%(name)s:%(levelname)s - %(message)s"
     logging.basicConfig(level=logging.INFO, format=log_fmt)
@@ -27,14 +27,24 @@ def train_all():
         y_small_test,
     ) = datasets.values()
 
-    model_options = [
-        adaboost,
-        gbm,
-        log_reg,
-        rf,
-        nca,
-        svm,
-    ]
+    all_models = {
+        "adaboost": adaboost,
+        "gbm": gbm,
+        "log_reg": log_reg,
+        "rf": rf,
+        "nca": nca,
+        "svm": svm,
+    }
+
+    model_options = []
+    if not models_to_train:
+        model_options = all_models.values()
+    else:   
+        for model, to_train in models_to_train.items():
+            if to_train:
+                model_options.append(all_models[model])
+
+    logger.info(f"TRAINING MODELS: {model_options}")
 
     for key, data in zip(
         ["large", "small"],
@@ -62,4 +72,22 @@ def train_all():
 
 
 if __name__ == "__main__":
-    train_all()
+    """ How to use argparse to specify which model(s) to train:
+    Enter this command to find out: python3 src/models/train_models.py -h 
+    Some examples:
+    python3 src/models/train_models.py == python3 src/models/train_models.py --models adaboost=true gbm=true log_reg=true rf=true nca=true svm=true
+    python3 src/models/train_models.py -m aDAbOoST=true GBM=false log_reg=stringOtherThanTrueFalse --> {'adaboost': True, 'gbm': False, 'log_reg': False}
+    """
+    import argparse
+    class ParseKwargs(argparse.Action):
+        def __call__(self, parser, namespace, values, option_string=None):
+            setattr(namespace, self.dest, dict())
+            for value in values:
+                key, value = value.split('=')
+                getattr(namespace, self.dest)[key.lower()] = True if value.lower() == 'true' else False
+
+    parser = argparse.ArgumentParser(epilog="Eg: python3 src/models/train_models.py -m adaboost=true gbm=false --> adaboost will be trained but gbm will not")
+    parser.add_argument('-m', '--models', nargs='*', action=ParseKwargs, help="specify whether to train a model. If argument is not given, all models will be trained.")
+    args = parser.parse_args()
+
+    train(args.models)
