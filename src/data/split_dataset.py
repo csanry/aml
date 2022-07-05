@@ -36,4 +36,22 @@ def main(test_size: float = 0.2):
 if __name__ == "__main__":
     log_fmt = "%(asctime)s:%(name)s:%(levelname)s - %(message)s"
     logging.basicConfig(level=logging.INFO, format=log_fmt)
-    main()
+
+    import argparse
+
+    def restricted_float(x):
+        try:
+            x = float(x)
+        except ValueError:
+            raise argparse.ArgumentTypeError(f"{x} not a floating-point literal")
+
+        if x < 0.0 or x > 1.0:
+            raise argparse.ArgumentTypeError(f"{x} not in range [0.0, 1.0]")
+        return x    
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--test_size', type=restricted_float, metavar="[0.0, 1.0]", default=0.2, required=False)
+    args = parser.parse_args()
+
+
+    main(args.test_size)
