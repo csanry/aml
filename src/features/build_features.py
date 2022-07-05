@@ -100,16 +100,10 @@ def main():
             ]
             df_filled = KNNImputer().fit_transform(df_subset)
             df[col] = df_filled[:, -1]
-
-        train, test = train_test_split(
-            df, test_size=0.2, random_state=config.RANDOM_STATE
-        )
-
-        for df, file_type in zip([train, test], ["train", "test"]):
-            df.to_parquet(config.FIN_FILE_PATH / f"{name}_{file_type}.parquet")
+        
+        df.to_parquet(config.INT_FILE_PATH / f"{name}_engineered.parquet")
 
     logger.info(f"DONE EXPORTS")
-
 
 if __name__ == "__main__":
     log_fmt = "%(asctime)s:%(name)s:%(levelname)s - %(message)s"
