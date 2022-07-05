@@ -31,19 +31,20 @@ The project contains two main pipelines
 ### Train Pipeline
 ```mermaid
 graph LR;    
-   make_dataset --> build_features --> split_dataset --> train_models --> evaluate_models
+   make_dataset --> split_dataset --> build_features --> train_models --> evaluate_models
 ```
 
 ### Predict Pipeline
 ```mermaid
 graph LR;    
-   make_dataset --> build_features --> split_dataset--> predict_models --> visualise_predictions
+   make_dataset --> split_dataset --> build_features--> predict_models --> visualise_predictions
 ```
 
 
 | Components | Description |
 | --- | --- |
 | `make_dataset`  | 1. Checks if the dataset exists in `data/raw`<br>2. Reads the file and performs pre-processing<br>3. Save outputs in `data/interim` for feature engineering  |
+| `split_dataset`  | 1. Split dataset into df_small and df_large based on loan threshold value. If threshold is 300000, loan from 0 to 299999 goes to df_small|
 | `build_features` | 1. Prepares train and validation set<br>2. Drops unnecessary columns for training<br>3. Encodes categorical variables<br>4. Bin numerical variables<br>5. Imputing missing data for MAR variables<br>6. Save outputs in `data/final`  |
 | `train_models` | 1. Trains specified candidate models (or train all models if not specified)<br>2. Tune hyperparameters for each model<br>3. Save model weights in `models` folder |
 | `evaluate_model`| 1. Evaluate models based on pre-defined metrics<br>2. Output charts to `reports/figures` |
