@@ -31,13 +31,13 @@ The project contains two main pipelines
 ### Train Pipeline
 ```mermaid
 graph LR;    
-   make_dataset --> build_features --> train_models --> evaluate_models
+   make_dataset --> build_features --> split_dataset --> train_models --> evaluate_models
 ```
 
 ### Predict Pipeline
 ```mermaid
 graph LR;    
-   make_dataset --> build_features --> predict_models --> visualise_predictions
+   make_dataset --> build_features --> split_dataset--> predict_models --> visualise_predictions
 ```
 
 
@@ -85,7 +85,8 @@ The repository is structured in the following hierarchy
     │   ├── __init__.py    <- Makes src a Python module
     │   │
     │   ├── data           <- Scripts to download or generate data
-    │   │   └── make_dataset.py
+    │   │   ├── make_dataset.py
+    │   │   └── split_dataset.py
     │   │
     │   ├── features       <- Scripts to turn raw data into features for modeling
     │   │   └── build_features.py
