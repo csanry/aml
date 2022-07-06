@@ -4,19 +4,19 @@ from src.helpers import load_model
 base_path = config.MODEL_OUTPUT_PATH
 
 large_models = {
-    "gbm": load_model(base_path / "gbm_large.pickle"),
-    "log_reg": load_model(base_path / "log_reg_large.pickle"),
-    "nca": load_model(base_path / "nca_large.pickle"),
-    "rf": load_model(base_path / "rf_large.pickle"),
-    "ada": load_model(base_path / "adaboost_large.pickle"),
-    "svm": load_model(base_path / "svm_large.pickle")
+    "gbm_300000": load_model(base_path / "gbm_300000_large.pickle"),
+    "log_reg_300000": load_model(base_path / "log_reg_300000_large.pickle"),
+    "nca_300000": load_model(base_path / "nca_300000_large.pickle"),
+    "rf_300000": load_model(base_path / "rf_300000_large.pickle"),
+    "ada_300000": load_model(base_path / "adaboost_300000_large.pickle"),
+    "svm_300000": load_model(base_path / "svm_300000_large.pickle"),
 }
 
 small_models = {
-    "gbm": load_model(base_path / "gbm_small.pickle"),
-    "log_reg": load_model(base_path / "log_reg_small.pickle"),
-    "nca": load_model(base_path / "nca_small.pickle"),
-    "rf": load_model(base_path / "rf_small.pickle"),
-    "ada": load_model(base_path / "adaboost_small.pickle"),
-    "svm": load_model(base_path / "svm_small.pickle")
+    "gbm_300000": load_model(base_path / "gbm_300000_small.pickle"),
+    "log_reg_300000": load_model(base_path / "log_reg_300000_small.pickle"),
+    "nca_300000": load_model(base_path / "nca_300000_small.pickle"),
+    "rf_300000": load_model(base_path / "rf_300000_small.pickle"),
+    "ada_300000": load_model(base_path / "adaboost_300000_small.pickle"),
+    "svm_300000": load_model(base_path / "svm_300000_small.pickle"),
 }
