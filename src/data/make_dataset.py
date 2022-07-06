@@ -2,36 +2,35 @@ import logging
 import os
 import warnings
 
-import numpy as np
 import pandas as pd
 from src import config, helpers
 
 warnings.filterwarnings("ignore")
 
 
-def main():
-    """Runs data processing scripts to turn raw data from (../raw) into
+def make_dataset(
+    data_source: str = "https://storage.googleapis.com/aml_0/Loan_Default.csv",
+) -> None:
+    """
+    Runs data processing scripts to turn raw data from (../raw) into
     cleaned data ready to be analyzed (saved in ../processed).
     """
+
     logger = logging.getLogger()
     logger.info("MAKING DATA SET FROM THE RAW DATA")
 
     if os.path.exists(config.RAW_FILE_PATH / config.RAW_FILE_NAME):
         logger.info("READING FROM THE LOCAL COPY")
-        df = pd.read_csv(config.RAW_FILE_PATH / config.RAW_FILE_NAME)
+        df = pd.read_csv(config.RAW_FILE_PATH / config.RAW_FILE_NAME, index_col=0)
     else:
         logger.info(f"FILE DOES NOT EXIST: {config.RAW_FILE_NAME}")
-        logger.info("DOWNLOADING DATA >>>")
-        df = pd.read_csv("https://storage.googleapis.com/aml_0/Loan_Default.csv")
+        logger.info("DOWNLOADING DATA ")
+        df = pd.read_csv(data_source, index_col=0)
         df.to_csv(config.RAW_FILE_PATH / config.RAW_FILE_NAME)
         logger.info("RAW FILE PLACED IN RAW FOLDER AND READY FOR BASIC TRANSFORMATIONS")
 
     # standardize columns
     df.columns = helpers.standardize_cols(df.columns)
-
-    df.drop(
-        columns=[col for col in df.columns if col.startswith("unnamed")], inplace=True
-    )
 
     # convert to numeric
     num_columns = [
@@ -43,6 +42,7 @@ def main():
         "loan_amount",
         "income",
     ]
+
     for num_col in num_columns:
         df[num_col] = helpers.convert_to_dtype(df[num_col], type="numeric")
 
@@ -120,9 +120,11 @@ def main():
         "occupancy_type",
         "open_credit",
     ]
+
     for cat_col in cat_columns:
         df[cat_col] = helpers.convert_to_dtype(df[cat_col], type="categorical")
 
+    # processing occupancy
     occupancy_type_map = {
         "pr": "primary",
         "sr": "secondary",
@@ -130,20 +132,23 @@ def main():
     }
     df["occupancy_type"] = df["occupancy_type"].map(occupancy_type_map)
 
-    # convert region
+    # processing region
     df["region"] = df["region"].str.lower().astype("category")
 
-    # convert age
+    # processing age
     age_bins = ["<25", "25-34", "35-44", "45-54", "55-64", "65-74", ">74"]
     age_cat = pd.CategoricalDtype(categories=age_bins, ordered=True)
     df["age"] = df["age"].astype(age_cat)
 
-    df.to_parquet(config.INT_FILE_PATH / f"df_processed.parquet")
-
-    logger.info("INTERIM FILE PLACED IN INTERIM AND READY FOR THRESHOLD SPLIT")
+    # extract file to INT
+    df.to_parquet(config.INT_FILE_PATH / config.BASIC_CLEAN_FILE_NAME)
+    logger.info("CLEAN FILE PLACED IN INTERIM AND READY FOR THRESHOLD SPLIT")
 
 
 if __name__ == "__main__":
+
     log_fmt = "%(asctime)s:%(name)s:%(levelname)s - %(message)s"
     logging.basicConfig(level=logging.INFO, format=log_fmt)
-    main()
+
+    make_dataset(data_source="https://storage.googleapis.com/aml_0/Loan_Default.csv")
+
