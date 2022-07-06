@@ -26,8 +26,7 @@ DEFAULT_RED = "#d65f5f"
 
 # filenames
 RAW_FILE_NAME = "Loan_Default.csv"
-INT_FILE_NAME = "df.parquet"
-
+BASIC_CLEAN_FILE_NAME = "df_basic_clean.parquet"
 
 # visualisations
 DEFAULT_FIGSIZE = (16, 10)
