@@ -15,8 +15,53 @@ import pandas.api.types as types
 from src import config
 
 
-def quick_eda(df: pd.DataFrame) -> None:
-    """Prints out quick summary statistics and information about the data
+def bin_values(df: pd.DataFrame, col: str) -> pd.Series:
+    """Bins values of a numeric column into 5 quantiles, then fills in missing 
+
+    Parameters
+    ----------
+    df : pd.DataFrame :
+        pandas DataFrame object
+
+    col : str : 
+        column to bin values on 
+
+    Returns
+    -------
+    None
+    """
+    column_binned = pd.qcut(df[col], q=5, labels=["1", "2", "3", "4", "5"])
+    column_binned = column_binned.astype("object")
+    column_binned = column_binned.fillna(value="na")
+    return column_binned
+
+
+def convert_to_dtype(col: pd.Series, type: str = "categorical") -> pd.Series:
+    """Convert a column to a dtype 
+
+    Parameters
+    ----------
+    type : str :
+        (Default value = 'categorical')
+        Specifies the type of conversion to make - either 'categorical' or 'numeric' 
+    col : pd.Series :
+        Input column 
+    Returns
+    -------
+    A list of column of type that is converted to 
+    
+    """
+    if type not in ["numeric", "categorical"]:
+        raise ValueError(
+            'Please enter a valid dtype of either: "numeric" or "categorical"'
+        )
+    elif type == "numeric":
+        return pd.to_numeric(col, errors="raise")
+    return col.astype("category")
+
+
+def get_dtypes(df: pd.DataFrame) -> Dict:
+    """Get the dtypes of each column in a dictionary format
 
     Parameters
     ----------
@@ -25,16 +70,9 @@ def quick_eda(df: pd.DataFrame) -> None:
 
     Returns
     -------
-    None; prints information
+    Dictionary of column-dtype key-value pairs
     """
-    print(
-        f"""
-    DATAFRAME HAS {df.shape[0]} ROWS AND {df.shape[1]} COLS
-    {df.info()}
-    """
-    )
-    display(df.describe().T)
-    display(df.head(5))
+    return df.dtypes.to_dict()
 
 
 def get_categorical_columns(df: pd.DataFrame) -> List:
@@ -68,56 +106,64 @@ def get_numeric_columns(df: pd.DataFrame) -> List:
     return [col for col in df.columns if types.is_numeric_dtype(df[col])]
 
 
-def bin_values(df: pd.DataFrame, col: str) -> pd.Series:
-    """Bins values of a numeric column into 5 quantiles, then fills in missing 
+def load_model(path_to_file):
+    with open(path_to_file, "rb") as file:
+        return pickle.load(file)
+
+
+def missingness_checks(df: pd.DataFrame) -> None:
+    """Perform missingness checks on the data
+
+    Parameters
+    ----------
+    df : pd.DataFrame :
+        pandas DataFrame object
+    
+    Returns
+    -------
+    Two plot outputs and missingness information
+    """
+
+    print(
+        f"""
+    NUMBER OF MISSING COLUMNS: {df.isna().sum().sum()}
+    MISSING COLUMNS (0: NO MISSING VALUES, 1: MISSING VALUES) 
+    {df.isna().sum()}
+
+    MISSINGNESS THROUGHOUT THE DATA
+    -------------------------------
+    """
+    )
+    msno.matrix(df)
+    plt.show()
+    print("MISSINGNESS CORRELATIONS")
+    msno.heatmap(df)
+    plt.show()
+
+
+def quick_eda(df: pd.DataFrame) -> None:
+    """Prints out quick summary statistics and information about the data
 
     Parameters
     ----------
     df : pd.DataFrame :
         pandas DataFrame object
 
-    col : str : 
-        column to bin values on 
-
     Returns
     -------
-    None
+    None; prints information
     """
-    column_binned = pd.qcut(df[col], q=5, labels=["1", "2", "3", "4", "5"])
-    column_binned = column_binned.astype("object")
-    column_binned = column_binned.fillna(value="na")
-    return column_binned
-
-
-def read_files() -> Dict:
-    """Read in files for training
-
-    Parameters
-    ----------
-    None
-
-    Returns
-    -------
-    train and test file types for large and small loans 
-    
+    print(
+        f"""
+    DATAFRAME HAS {df.shape[0]} ROWS AND {df.shape[1]} COLS
+    {df.info()}
     """
-    large_train = pd.read_parquet(config.FIN_FILE_PATH / "df_large_train.parquet")
-    small_train = pd.read_parquet(config.FIN_FILE_PATH / "df_small_train.parquet")
-    large_test = pd.read_parquet(config.FIN_FILE_PATH / "df_large_test.parquet")
-    small_test = pd.read_parquet(config.FIN_FILE_PATH / "df_small_test.parquet")
-
-    datasets = OrderedDict()
-    for data, name in zip(
-        [large_train, large_test, small_train, small_test],
-        ["large_train", "large_test", "small_train", "small_test"],
-    ):
-        datasets[f"X_{name}"] = data.drop(columns=config.TARGET)
-        datasets[f"y_{name}"] = data[config.TARGET]
-
-    return datasets
+    )
+    display(df.describe().T)
+    display(df.head(5))
 
 
-def read_pred_files():
+def read_pred_files() -> Tuple[pd.DataFrame, pd.DataFrame]:
     """
     Read in files for predictions
 
@@ -145,30 +191,6 @@ def read_pred_files():
     return large_loans_pred, small_loans_pred
 
 
-def convert_to_dtype(col: pd.Series, type: str = "categorical") -> pd.Series:
-    """Convert a column to a dtype 
-
-    Parameters
-    ----------
-    type : str :
-        (Default value = 'categorical')
-        Specifies the type of conversion to make - either 'categorical' or 'numeric' 
-    col : pd.Series :
-        Input column 
-    Returns
-    -------
-    A list of column of type that is converted to 
-    
-    """
-    if type not in ["numeric", "categorical"]:
-        raise ValueError(
-            'Please enter a valid dtype of either: "numeric" or "categorical"'
-        )
-    elif type == "numeric":
-        return pd.to_numeric(col, errors="raise")
-    return col.astype("category")
-
-
 def replace_missing_values(
     df: pd.DataFrame, cols: Union[str, Iterable[str], Hashable], value
 ) -> pd.DataFrame:
@@ -191,6 +213,24 @@ def replace_missing_values(
 
     """
     return df.fillna(value={cols: value})
+
+
+def restricted_int(input):
+    """
+    Checks if input satisfied constraints: 
+        Split threshold must be a positive integer
+    """
+
+    try:
+        input = int(input)
+    except ValueError:
+        raise argparse.ArgumentTypeError(f"{input} not an integer")
+
+    if input < 0:
+        raise argparse.ArgumentTypeError(
+            f"{input} loan value threshold cannot be negative."
+        )
+    return input
 
 
 def return_value_counts(df: pd.DataFrame) -> None:
@@ -247,63 +287,4 @@ def visualize_cols(column_list: List[str]) -> List[str]:
     List of transformed column names
     """
     return [col.capitalize().replace("_", " ") for col in column_list]
-
-
-def missingness_checks(df: pd.DataFrame) -> None:
-    """Perform missingness checks on the data
-
-    Parameters
-    ----------
-    df : pd.DataFrame :
-        pandas DataFrame object
-    
-    Returns
-    -------
-    Two plot outputs and missingness information
-    """
-
-    print(
-        f"""
-    NUMBER OF MISSING COLUMNS: {df.isna().sum().sum()}
-    MISSING COLUMNS (0: NO MISSING VALUES, 1: MISSING VALUES) 
-    {df.isna().sum()}
-
-    MISSINGNESS THROUGHOUT THE DATA
-    -------------------------------
-    """
-    )
-    msno.matrix(df)
-    plt.show()
-    print("MISSINGNESS CORRELATIONS")
-    msno.heatmap(df)
-    plt.show()
-
-
-def get_dtypes(df: pd.DataFrame) -> Dict:
-    """Get the dtypes of each column in a dictionary format
-
-    Parameters
-    ----------
-    df : pd.DataFrame :
-        pandas DataFrame object
-
-    Returns
-    -------
-    Dictionary of column-dtype key-value pairs
-    """
-    return df.dtypes.to_dict()
-
-
-def load_model(path_to_file):
-    with open(path_to_file, "rb") as file:
-        return pickle.load(file)
-
-
-def main() -> None:
-    """ """
-    pass
-
-
-if __name__ == "__main__":
-    main()
 

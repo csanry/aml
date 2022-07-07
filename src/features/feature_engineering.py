@@ -12,24 +12,21 @@ from src.data import split_dataset
 warnings.filterwarnings("ignore")
 
 
-def main():
-    """Feature engineering on the data consisting of 
-    Imputing missing values 
-    Dropping columns and rows 
+def feature_engineering(files: list = None):
+    """
+    Feature engineering on the data consisting of: 
+        1) Imputing missing values 
+        2) Vectorizing categorical data 
+        3) Binning numerical data 
+        4) Dropping columns and rows 
     """
 
     logger = logging.getLogger()
     logger.info("FEATURE ENGINEERING")
 
-    if not os.path.exists(
-        config.INT_FILE_PATH / "df_large_loans.parquet"
-    ) or not os.path.exists(config.INT_FILE_PATH / "df_small_loans.parquet"):
-        split_dataset.main()
+    for file_path in files:
+        df = pd.read_parquet(config.INT_FILE_PATH / file_path)
 
-    df_small = pd.read_parquet(config.INT_FILE_PATH / "df_small_loans.parquet")
-    df_large = pd.read_parquet(config.INT_FILE_PATH / "df_large_loans.parquet")
-
-    for name, df in zip(["df_small", "df_large"], [df_small, df_large]):
         df.drop(
             columns=[
                 "id",
@@ -57,8 +54,7 @@ def main():
             ],
             inplace=True,
         )
-
-        logger.info("BINNING NUMERICAL DATA")
+        logger.info(f"BINNING NUMERICAL DATA: {file_path}")
 
         for col in ["property_value", "ltv", "dtir1"]:
             df[f"{col}_binned"] = helpers.bin_values(df, col)
@@ -66,7 +62,7 @@ def main():
             df = pd.concat([df, dummies], axis=1)
             df.drop(columns=[col, f"{col}_binned", f"{col}_na"], inplace=True)
 
-        logger.info("VECTORIZING CATEGORICAL DATA")
+        logger.info(f"VECTORIZING CATEGORICAL DATA: {file_path}")
 
         for col in df.columns:
             if not types.is_categorical_dtype(df[col]):
@@ -79,7 +75,7 @@ def main():
             df = pd.concat([df, dummies], axis=1)
             df.drop(columns=col, inplace=True)
 
-        logger.info("IMPUTING MISSING DATA")
+        logger.info(f"IMPUTING MISSING DATA: {file_path}")
 
         # impute missing income and loan_limit using the subset of variables
         for col in ["income", "loan_limit"]:
@@ -100,17 +96,25 @@ def main():
             ]
             df_filled = KNNImputer().fit_transform(df_subset)
             df[col] = df_filled[:, -1]
-        
-        train, test = train_test_split(
-            df, test_size=0.2, random_state=config.RANDOM_STATE
-        )
 
-        for df, file_type in zip([train, test], ["train", "test"]):
-            df.to_parquet(config.FIN_FILE_PATH / f"{name}_{file_type}.parquet")
+        final_file_path = file_path.replace("init_", "")
+        df.to_parquet(config.FIN_FILE_PATH / final_file_path)
+        logger.info(f"FILE SAVED AS: {final_file_path}")
 
-    logger.info(f"DONE EXPORTS")
+    logger.info("DONE EXPORTS")
+
 
 if __name__ == "__main__":
+
+    import argparse
+
+    parser = argparse.ArgumentParser(
+        description="Read in files to perform feature engineering on"
+    )
+    parser.add_argument("--files", nargs="*", default=[])
+    args = parser.parse_args()
+
     log_fmt = "%(asctime)s:%(name)s:%(levelname)s - %(message)s"
     logging.basicConfig(level=logging.INFO, format=log_fmt)
-    main()
+
+    feature_engineering(files=args.files)

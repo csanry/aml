@@ -52,7 +52,7 @@ def train(X_train, y_train, scorer, cv_split):
     return svm_cv, svm_best_pipe
 
 
-def evaluate(X_test, y_test, svm_cv, svm_best_pipe, file_name):
+def evaluate(svm_cv, svm_best_pipe, X_test, y_test, file_name):
 
     evaluation.evaluate_tuning(tuner=svm_cv)
     svm_y_pred_prob = svm_best_pipe.predict_proba(X_test)[:, 1]

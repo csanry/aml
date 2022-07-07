@@ -13,16 +13,18 @@ warnings.filterwarnings("ignore")
 def train(X_train, y_train, scorer, cv_split):
 
     # Setup the hyperparameter grid
-    gbm_param_grid = {
-        "gbm__learning_rate": np.arange(0.05, 0.4, 0.05),
-        "gbm__max_depth": np.arange(3, 6, 1),
-        "gbm__n_estimators": np.arange(50, 200, 25),
-        "gbm__reg_alpha": list(np.linspace(0, 1)),
-        "gbm__reg_lambda": list(np.linspace(0, 1)),
+    rf_param_grid = {
+        "rf__learning_rate": np.arange(0.8, 1.2, 0.05),
+        "rf__subsample": np.arange(0.6, 0.9, 0.1),
+        "rf__colsample_bynode": np.arange(0.6, 0.9, 0.1),
+        "rf__max_depth": np.arange(3, 10, 1),
+        "rf__n_estimators": np.arange(50, 200, 25),
+        "rf__reg_alpha": list(np.linspace(0, 1)),
+        "rf__reg_lambda": list(np.linspace(0, 1)),
     }
 
     # baseline model
-    gbm_clf = xgb.XGBClassifier(
+    rf_clf = xgb.XGBRFClassifier(
         objective="binary:logistic",
         booster="gbtree",
         n_jobs=config.N_JOBS,
@@ -32,12 +34,12 @@ def train(X_train, y_train, scorer, cv_split):
     )
 
     # build the pipeline
-    gbm_pipe = Pipeline([("gbm", gbm_clf)])
+    rf_pipe = Pipeline([("rf", rf_clf)])
 
     # Cross validate model with RandomizedSearch
-    gbm_cv = RandomizedSearchCV(
-        estimator=gbm_pipe,
-        param_distributions=gbm_param_grid,
+    rf_cv = RandomizedSearchCV(
+        estimator=rf_pipe,
+        param_distributions=rf_param_grid,
         n_iter=30,
         scoring=scorer,
         refit="F_score",
@@ -48,22 +50,22 @@ def train(X_train, y_train, scorer, cv_split):
         random_state=config.RANDOM_STATE,
     )
 
-    gbm_cv.fit(X_train, y_train)
+    rf_cv.fit(X_train, y_train)
 
-    gbm_best_pipe = gbm_cv.best_estimator_
+    rf_best_pipe = rf_cv.best_estimator_
 
-    return gbm_cv, gbm_best_pipe
+    return rf_cv, rf_best_pipe
 
 
-def evaluate(X_test, y_test, gbm_cv, gbm_best_pipe, file_name):
+def evaluate(rf_cv, rf_best_pipe, X_test, y_test, file_name):
 
-    gbm_y_pred_prob = gbm_best_pipe.predict_proba(X_test)[:, 1]
-    gbm_y_pred = gbm_best_pipe.predict(X_test)
+    evaluation.evaluate_tuning(tuner=rf_cv)
 
-    evaluation.evaluate_tuning(tuner=gbm_cv)
+    rf_y_pred_prob = rf_best_pipe.predict_proba(X_test)[:, 1]
+    rf_y_pred = rf_best_pipe.predict(X_test)
 
     report = evaluation.evaluate_report(
-        y_test=y_test, y_pred=gbm_y_pred, y_pred_prob=gbm_y_pred_prob
+        y_test=y_test, y_pred=rf_y_pred, y_pred_prob=rf_y_pred_prob
     )
 
     plotting.plot_confusion_matrix(cf_matrix=report["cf_matrix"], model_name=file_name)
@@ -77,4 +79,5 @@ def evaluate(X_test, y_test, gbm_cv, gbm_best_pipe, file_name):
     save_path = config.MODEL_OUTPUT_PATH / f"{file_name}.pickle"
 
     with open(save_path, "wb") as file:
-        pickle.dump(gbm_best_pipe, file)
+        pickle.dump(rf_best_pipe, file)
+

@@ -53,7 +53,7 @@ def train(X_train, y_train, scorer, cv_split):
     return log_reg_cv, log_reg_best_pipe
 
 
-def evaluate(X_test, y_test, log_reg_cv, log_reg_best_pipe, file_name):
+def evaluate(log_reg_cv, log_reg_best_pipe, X_test, y_test, file_name):
 
     log_reg_y_pred_prob = log_reg_best_pipe.predict_proba(X_test)[:, 1]
     log_reg_y_pred = log_reg_best_pipe.predict(X_test)

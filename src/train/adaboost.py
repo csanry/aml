@@ -42,7 +42,7 @@ def train(X_train, y_train, scorer, cv_split):
     return adaboost_cv, adaboost_best_pipe
 
 
-def evaluate(X_test, y_test, adaboost_cv, adaboost_best_pipe, file_name):
+def evaluate(adaboost_cv, adaboost_best_pipe, X_test, y_test, file_name):
     evaluation.evaluate_tuning(tuner=adaboost_cv)
     adaboost_y_pred_prob = adaboost_best_pipe.predict_proba(X_test)[:, 1]
     adaboost_y_pred = adaboost_best_pipe.predict(X_test)

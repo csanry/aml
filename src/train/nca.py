@@ -47,7 +47,7 @@ def train(X_train, y_train, scorer, cv_split):
     return knn_cv, knn_best_pipe
 
 
-def evaluate(X_test, y_test, knn_cv, knn_best_pipe, file_name):
+def evaluate(knn_cv, knn_best_pipe, X_test, y_test, file_name):
 
     evaluation.evaluate_tuning(tuner=knn_cv)
     knn_y_pred_prob = knn_best_pipe.predict_proba(X_test)[:, 1]
