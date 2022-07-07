@@ -1,31 +1,38 @@
 import logging
 import os
 import warnings
+
 import pandas as pd
-from src.data import make_dataset
 from src import config
+from src.data.make_dataset import make_dataset
 
 warnings.filterwarnings("ignore")
 
 
-def main(threshold: int = 300000):
+def split_dataset(threshold: int = 300_000):
 
     logger = logging.getLogger()
-    logger.info(f"LOAN SIZE SPLIT BY THRESHOLD {threshold}")
+    logger.info(f"SPLITTING LOAN SIZE BY THRESHOLD: {threshold}")
 
-    if not os.path.exists(config.INT_FILE_PATH / "df_processed.parquet"):
-        make_dataset.main()
+    if not os.path.exists(config.INT_FILE_PATH / config.BASIC_CLEAN_FILE_NAME):
+        make_dataset()
 
-    df = pd.read_parquet(config.INT_FILE_PATH / "df_processed.parquet")
+    df = pd.read_parquet(config.INT_FILE_PATH / config.BASIC_CLEAN_FILE_NAME)
 
     # split into large and small loans
     df_small = df.loc[df["loan_amount"] < threshold, :]
     df_large = df.loc[df["loan_amount"] >= threshold, :]
 
-    df_small.to_parquet(config.INT_FILE_PATH / "df_small_loans.parquet")
-    df_large.to_parquet(config.INT_FILE_PATH / "df_large_loans.parquet")
+    df_small.to_parquet(config.INT_FILE_PATH / f"df_small_loans_{threshold}.parquet")
+    df_large.to_parquet(config.INT_FILE_PATH / f"df_large_loans_{threshold}.parquet")
 
     logger.info(f"THRESHOLD SPLIT AT {threshold} DONE")
+    logger.info(
+        f"SMALL LOANS PATH: {config.INT_FILE_PATH / f'df_small_loans_{threshold}.parquet'}"
+    )
+    logger.info(
+        f"LARGE LOANS PATH: {config.INT_FILE_PATH / f'df_large_loans_{threshold}.parquet'}"
+    )
 
 
 if __name__ == "__main__":
@@ -34,18 +41,14 @@ if __name__ == "__main__":
 
     import argparse
 
-    def restricted_int(x):
-        try:
-            x = int(x)
-        except ValueError:
-            raise argparse.ArgumentTypeError(f"{x} not an integer")
+    from src.helpers import restricted_int
 
-        if x < 0:
-            raise argparse.ArgumentTypeError(f"{x} loan value threshold cannot be negative.")
-        return x    
-
-    parser = argparse.ArgumentParser()
-    parser.add_argument('-t', '--threshold', type=restricted_int, default=300000, required=False)
+    parser = argparse.ArgumentParser(
+        description="Process threshold required for small-large split"
+    )
+    parser.add_argument(
+        "--threshold", type=restricted_int, default=300_000, required=True
+    )
     args = parser.parse_args()
 
-    main(args.threshold)
+    split_dataset(threshold=args.threshold)
