@@ -13,6 +13,7 @@ Table of Contents
 | 5. | [Teardown Environment](#5) | 
 | 6. | [Development Workflow](#6) | 
 | 7. | [Pull Requests](#7) | 
+| 8. | [Project artifacts](#8) |
 
 
 About this Project <a name="1"></a>
@@ -209,5 +210,15 @@ $ git push origin cs
 * For a visual explanation refer to [this document](/pr.pdf)
 
 
+Project artifacts <a name="8"></a>
+------------
 
+* Initial EDA is saved in [notebooks](https://github.com/csanry/aml/blob/main/notebooks/eda.ipynb)
 
+* Models are saved in the [models](https://github.com/csanry/aml/tree/main/models) folder
+
+* Confusion matrices generated from the training process are saved in [reports/figures/confusion_matrix](https://github.com/csanry/aml/tree/main/reports/figures/confusion_matrix)
+
+* ROC curves generated from the training process are saved in [reports/figures/confusion_matrix](https://github.com/csanry/aml/tree/main/reports/figures/roc)
+
+* The error analysis is saved in [notebooks](https://github.com/csanry/aml/blob/main/notebooks/model_evaluation.ipynb)
