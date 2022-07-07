@@ -28,16 +28,39 @@ Workflow <a name="2"></a>
 
 The project contains two main pipelines
 
+The train pipeline can be run using the following make commands after setting up the environment: `training_pipe` to select the models, `train_thresholds` to train on loan thresholds.
+
+```bash
+make training_pipe
+make train_thresholds
+```
+
+Alternatively, as trained models are already saved under the `models` folders, generate all the data required to run the prediction pipe using 
+
+```bash
+make preprocessing
+```
+
 ### Train Pipeline
 ```mermaid
 graph LR;    
-   make_dataset --> split_dataset --> build_features --> train_models --> evaluate_models
+   make_dataset --> split_dataset --> train_test_split --> feature_engineering --> train_models 
+   train_models --> select_large_loans_model --> train_thresholds --> final_selection
+   train_models --> select_small_loans_model --> train_thresholds 
+```
+
+The predict pipeline is a proof of concept in order to show how the eventual model would serve predictions. It generates a predictions parquet file in `data/final`, assuming the best model choice is the `300,000` threshold split and the `Random Forest` and `GBM` for small and large loans. 
+
+Run using 
+
+```bash
+make prediction_pipe
 ```
 
 ### Predict Pipeline
 ```mermaid
 graph LR;    
-   make_dataset --> split_dataset --> build_features--> predict_models --> visualise_predictions
+   make_dataset --> split_dataset --> feature_engineering --> predict_models
 ```
 
 
@@ -49,7 +72,6 @@ graph LR;
 | `train_models` | 1. Trains specified candidate models (or train all models if not specified)<br>2. Tune hyperparameters for each model<br>3. Save model weights in `models` folder |
 | `evaluate_model`| 1. Evaluate models based on pre-defined metrics<br>2. Output charts to `reports/figures` |
 | `predict_model`| 1. Loads pre-trained models from `models`<br>2. Output predictions in a `.csv` format |
-| `visualize_predictions`| 1. Loads predictions from models<br>2. Output visualizations |
 
 Project Organization <a name="3"></a>
 ------------
@@ -91,20 +113,16 @@ The repository is structured in the following hierarchy
     │   │
     │   ├── features       <- Scripts to turn raw data into features for modeling
     │   │   └── build_features.py
+    │   │   └── train_test_split_data.py
     │   │
     │   ├── models         <- Scripts to train models and then use trained models to make
     │   │   │                 predictions
     │   │   └── train_models.py
     │   │ 
-    │   ├── predict        <- Script to predict on new, unseen models
-    │   │   └── predict_model.py
-    │   │ 
-    │   └── visualization  <- Scripts to create exploratory and results oriented visualizations
-    │       └── visualize.py
+    │   └── predict        <- Script to predict on new, unseen models
+    │       └── predict_model.py
     | 
     └── tox.ini            <- tox file with settings for running tox; see tox.readthedocs.io
-
-
 
 
 Setting up the environment <a name="4"></a>
@@ -135,23 +153,10 @@ $ docker-compose up
  
 The command launches an Ubuntu-based distro, and a Jupyter Lab environment for running the pipelines. Launch the Lab environment from the terminal by clicking on the generated URL
 
-In the environment, run the following commands in an open terminal 
-
-```bash
-cd src
-bash run_train_pipeline.sh
-```
-
-Check that the environment is correctly set up using the following command
+Check that the environment is correctly set up using the following command:
 
 ```bash
 make test_environment
-```
-
-Run the predict pipeline using 
-
-```bash 
-bash run_predict_pipeline.sh
 ```
 
 Tearing down the environment <a name="5"></a>
@@ -164,7 +169,6 @@ Run the following command on the terminal to tear down the environment
 ```
 docker-compose down
 ```
-
 
 Development workflow <a name="6"></a>
 ------------

@@ -103,7 +103,7 @@ commits:
 	pre-commit run --all-files
 
 
-## Run pipe
+## Run training pipe
 training_pipe: 
 	python3 src/data/make_dataset.py &&\
 	python3 src/data/split_dataset.py --threshold 300_000 &&\
@@ -119,6 +119,7 @@ training_pipe:
 	 --models adaboost=true gbm=true log_reg=true rf=true nca=true svm=true
 
 
+## Train thresholds
 train_thresholds:
 	python3 src/data/make_dataset.py &&\
 	python3 src/data/split_dataset.py --threshold 200_000 &&\
@@ -154,6 +155,43 @@ train_thresholds:
 	 --sl_files train_df_small_loans_500000.parquet test_df_small_loans_500000.parquet \
 	 --models adaboost=false gbm=true log_reg=false rf=true nca=false svm=false
 
+
+## Run prediction pipe
+prediction_pipe: 
+	python3 src/data/make_dataset.py &&\
+	python3 src/data/split_dataset.py --threshold 300_000 &&\
+	python3 src/features/train_test_split_data.py \
+	 --files df_small_loans_300000.parquet df_large_loans_300000.parquet &&\
+	python3 src/features/feature_engineering.py \
+	 --files train_init_df_large_loans_300000.parquet train_init_df_small_loans_300000.parquet \
+	 test_init_df_large_loans_300000.parquet test_init_df_small_loans_300000.parquet &&\
+	python3 src/predict/predict_models.py
+
+
+## Process data up to pre training
+preprocessing: 
+	python3 src/data/make_dataset.py &&\
+	python3 src/data/split_dataset.py --threshold 200_000 &&\
+	python3 src/data/split_dataset.py --threshold 300_000 &&\
+	python3 src/data/split_dataset.py --threshold 400_000 &&\
+	python3 src/data/split_dataset.py --threshold 500_000
+
+	python3 src/features/train_test_split_data.py \
+	 --files \
+	 df_small_loans_200000.parquet df_large_loans_200000.parquet \
+	 df_small_loans_300000.parquet df_large_loans_300000.parquet \
+	 df_small_loans_400000.parquet df_large_loans_400000.parquet \
+	 df_small_loans_500000.parquet df_large_loans_500000.parquet &&\
+	python3 src/features/feature_engineering.py \
+	 --files \
+	 train_init_df_large_loans_200000.parquet train_init_df_small_loans_200000.parquet \
+	 test_init_df_large_loans_200000.parquet test_init_df_small_loans_200000.parquet \
+	 train_init_df_large_loans_300000.parquet train_init_df_small_loans_300000.parquet \
+	 test_init_df_large_loans_300000.parquet test_init_df_small_loans_300000.parquet \
+	 train_init_df_large_loans_400000.parquet train_init_df_small_loans_400000.parquet \
+	 test_init_df_large_loans_400000.parquet test_init_df_small_loans_400000.parquet \
+	 train_init_df_large_loans_500000.parquet train_init_df_small_loans_500000.parquet \
+	 test_init_df_large_loans_500000.parquet test_init_df_small_loans_500000.parquet
 
 
 #################################################################################

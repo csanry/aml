@@ -175,8 +175,12 @@ def read_pred_files() -> Tuple[pd.DataFrame, pd.DataFrame]:
     -------
     Large and small loans to predict 
     """
-    large_loans = pd.read_parquet(config.FIN_FILE_PATH / "df_large_test.parquet")
-    small_loans = pd.read_parquet(config.FIN_FILE_PATH / "df_small_test.parquet")
+    large_loans = pd.read_parquet(
+        config.FIN_FILE_PATH / "test_df_large_loans_300000.parquet"
+    )
+    small_loans = pd.read_parquet(
+        config.FIN_FILE_PATH / "test_df_small_loans_300000.parquet"
+    )
 
     large_loans_pred = large_loans.drop(columns=config.TARGET)
     small_loans_pred = small_loans.drop(columns=config.TARGET)
