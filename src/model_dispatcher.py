@@ -30,12 +30,6 @@ small_models = {
     "rf_300000": load_model(base_path / "rf_300000_small.pickle"),
     "ada_300000": load_model(base_path / "adaboost_300000_small.pickle"),
     "svm_300000": load_model(base_path / "svm_300000_small.pickle"),
-    "gbm_200000": load_model(base_path / "gbm_200000_small.pickle"),
-    "gbm_400000": load_model(base_path / "gbm_400000_small.pickle"),
-    "gbm_500000": load_model(base_path / "gbm_500000_small.pickle"),
-    "rf_200000": load_model(base_path / "rf_200000_small.pickle"),
-    "rf_400000": load_model(base_path / "rf_400000_small.pickle"),
-    "rf_500000": load_model(base_path / "rf_500000_small.pickle"),
 }
 
 small_models_threshold_sel = {
