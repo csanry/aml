@@ -72,6 +72,7 @@ test_environment:
 
 ## Setup packages
 pkg: 
+	source activate aml
 	pip install -e .
 
 
