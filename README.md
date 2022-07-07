@@ -219,6 +219,6 @@ Project artifacts <a name="8"></a>
 
 * Confusion matrices generated from the training process are saved in [reports/figures/confusion_matrix](https://github.com/csanry/aml/tree/main/reports/figures/confusion_matrix)
 
-* ROC curves generated from the training process are saved in [reports/figures/confusion_matrix](https://github.com/csanry/aml/tree/main/reports/figures/roc)
+* ROC curves generated from the training process are saved in [reports/figures/roc](https://github.com/csanry/aml/tree/main/reports/figures/roc)
 
 * The error analysis is saved in [notebooks](https://github.com/csanry/aml/blob/main/notebooks/model_evaluation.ipynb)
